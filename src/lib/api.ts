@@ -3,6 +3,7 @@ import { ZodError } from "zod";
 import { getOperatorSession, getVolunteerSession, hasDemoAccess, type Session } from "./auth/session";
 import { env } from "./env";
 import { DispatchError } from "./services/dispatch";
+import { RegistrationError } from "./services/residents";
 
 export const json = (data: unknown, init?: ResponseInit) => Response.json(data, init);
 export const error = (status: number, message: string) => Response.json({ error: message }, { status });
@@ -14,6 +15,7 @@ export function handle<A extends unknown[]>(fn: (...args: A) => Promise<Response
     } catch (e) {
       if (e instanceof Response) return e;
       if (e instanceof DispatchError) return error(e.status, e.message);
+      if (e instanceof RegistrationError) return error(409, e.message);
       if (e instanceof ZodError) return error(400, e.issues.map((i) => `${i.path.join(".")}: ${i.message}`).join("; "));
       console.error(e);
       return error(500, (e as Error).message ?? "Internal error");

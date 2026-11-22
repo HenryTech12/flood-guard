@@ -90,6 +90,12 @@
     "safe_subject": "{name} is safe",
     "safe_rescued": "{name} has been rescued by a FloodGuard volunteer and is safe (reference {ref}).",
     "safe_checkin": "{name} checked in as SAFE with FloodGuard at {time}.",
-    "footer": "You receive this because you registered with FloodGuard. SMS STOP to {shortcode} to stop alerts, or DELETE to erase your data."
+    "footer": "You receive this because you registered with FloodGuard. SMS STOP to {shortcode} to stop alerts, or DELETE to erase your data.",
+    "verify_subject": "Confirm your email for FloodGuard alerts",
+    "verify_title": "Confirm your email",
+    "verify_body": "Hi {name}, you signed up for FloodGuard flood alerts for {zone}. Confirm this email address so we can send you warnings here as well as by SMS.",
+    "verify_cta": "Confirm my email",
+    "verify_ignore": "If you did not sign up, ignore this email — nothing will be sent to you.",
+    "unsubscribe": "Stop alert emails"
   }
 }

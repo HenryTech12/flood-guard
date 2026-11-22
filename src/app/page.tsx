@@ -1,6 +1,13 @@
 import Link from "next/link";
 import { getRegion } from "../../config/regions";
 import { env } from "@/lib/env";
+import SignupCard from "./SignupCard";
+
+const EMAIL_BANNER: Record<string, { text: string; cls: string }> = {
+  confirmed: { text: "Email confirmed ✓ — flood alerts for your area will now also come by email.", cls: "border-green-700 bg-green-950/50 text-green-200" },
+  unsubscribed: { text: "You will no longer receive alert emails. SMS alerts continue — send STOP to stop them too.", cls: "border-slate-600 bg-slate-900 text-slate-200" },
+  invalid: { text: "That link is invalid or has expired. Sign up again to get a new one.", cls: "border-red-800 bg-red-950/50 text-red-200" },
+};
 
 export const dynamic = "force-dynamic";
 
@@ -11,7 +18,9 @@ const CARDS = [
   { href: "/report", title: "Report flooding", body: "Tell us where water is rising or roads are blocked.", tag: "Residents" },
 ];
 
-export default function Home() {
+export default async function Home({ searchParams }: { searchParams: Promise<{ email?: string }> }) {
+  const { email } = await searchParams;
+  const banner = email ? EMAIL_BANNER[email] : undefined;
   const region = getRegion();
   const demo = env.demoMode;
   return (
@@ -24,6 +33,16 @@ export default function Home() {
           <p className="text-slate-400">From early warning to rescue · {region.name}, {region.state} State</p>
         </div>
       </div>
+
+      {banner && (
+        <div className={`mt-6 rounded-xl border px-4 py-3 ${banner.cls}`} data-testid="email-banner">
+          {banner.text}
+        </div>
+      )}
+
+      <section className="mt-8">
+        <SignupCard />
+      </section>
 
       <section className="mt-8 grid gap-4 rounded-2xl border border-sky-900 bg-sky-950/40 p-6 sm:grid-cols-3">
         <div>

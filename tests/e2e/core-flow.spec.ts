@@ -144,3 +144,46 @@ test("USSD help request from an unregistered basic phone", async ({ browser }) =
   expect(labels.some((l: string) => l.startsWith("Message"))).toBe(false); // no double counting
   await ctx.close();
 });
+
+test("landing-page sign-up → confirm email → alert email → unsubscribe", async ({ browser }) => {
+  const ctx = await browser.newContext();
+  const page = await ctx.newPage();
+  await page.goto(`/api/demo/enter?key=${DEMO_KEY}&next=/demo`);
+  const api = page.request;
+  await api.post("/api/demo/reset", { data: {} });
+
+  const email = `amina.e2e.${Date.now()}@example.com`;
+  await page.goto("/");
+  const form = page.getByTestId("signup");
+  await form.getByLabel("Name", { exact: true }).fill("Amina Testfake");
+  await form.getByLabel("Email", { exact: true }).fill(email);
+  await form.getByLabel("Phone", { exact: true }).fill(`0800${String(Date.now()).slice(-7)}`);
+  await form.getByLabel("Area", { exact: true }).selectOption("ganaja");
+  await form.getByRole("checkbox").check();
+  await form.getByRole("button", { name: "Sign up" }).click();
+  await expect(page.getByTestId("signup-done")).toContainText(email);
+
+  // A confirmation email was queued; no alert emails until it is confirmed.
+  const verify = (await messages(api, "email_verify")).find((m) => m.to === email);
+  expect(verify?.body).toContain("Confirm my email");
+  await api.post("/api/demo/raise-zone", { data: { zoneId: "ganaja", level: "medium" } });
+  expect((await messages(api, "alert")).some((m) => m.to === email)).toBe(false);
+
+  // Confirm (demo mode shows the link because the mock provider has no inbox).
+  await page.getByTestId("demo-verify").click();
+  await expect(page.getByTestId("email-banner")).toContainText("Email confirmed");
+
+  // Escalation → the confirmed address gets the alert email, with an unsubscribe link.
+  await api.post("/api/demo/raise-zone", { data: { zoneId: "ganaja", level: "high" } });
+  const alert = (await messages(api, "alert")).find((m) => m.to === email && m.channel === "email");
+  expect(alert?.body).toContain("Stop alert emails");
+  const unsub = alert!.body.match(/Stop alert emails: (\S+)/)![1];
+  await page.goto(unsub.replace(/^https?:\/\/[^/]+/, ""));
+  await expect(page.getByTestId("email-banner")).toContainText("no longer receive alert emails");
+
+  // Unsubscribed → a later escalation sends no email (SMS still goes out).
+  const before = (await messages(api, "alert")).filter((m) => m.to === email).length;
+  await api.post("/api/demo/raise-zone", { data: { zoneId: "ganaja", level: "severe" } });
+  expect((await messages(api, "alert")).filter((m) => m.to === email).length).toBe(before);
+  await ctx.close();
+});

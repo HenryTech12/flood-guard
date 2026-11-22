@@ -59,7 +59,7 @@ export async function notifyOpsCriticalRequest(db: Db, r: { id: string; ref: str
 }
 
 /** Resident flood-alert email in the resident's language (English fallback). */
-export function alertEmail(lang: Lang, level: RiskLevel, vars: Record<string, string>): { subject: string; text: string; html: string } {
+export function alertEmail(lang: Lang, level: RiskLevel, vars: Record<string, string>, unsubscribeUrl?: string): { subject: string; text: string; html: string } {
   const region = getRegion();
   const all = { ...vars, shortcode: region.smsShortcode, ussd: region.ussdCode };
   const { text, html } = renderEmail({
@@ -67,6 +67,7 @@ export function alertEmail(lang: Lang, level: RiskLevel, vars: Record<string, st
     accent: LEVEL_ACCENT[level],
     paragraphs: [tr(lang, `voice.${level}`, all)],
     footer: tr(lang, "email.footer", all),
+    unsubscribe: unsubscribeUrl ? { label: tr(lang, "email.unsubscribe", all), url: unsubscribeUrl } : undefined,
   });
   return { subject: `FloodGuard: ${tr(lang, `email.alert_subject.${level}`, all)}`, text, html };
 }

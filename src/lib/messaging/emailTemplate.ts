@@ -9,6 +9,7 @@ export interface EmailContent {
   bullets?: string[];
   cta?: { label: string; url: string };
   footer?: string;
+  unsubscribe?: { label: string; url: string };
 }
 
 export function escapeHtml(s: string): string {
@@ -23,6 +24,7 @@ export function renderEmail(c: EmailContent): { text: string; html: string } {
     ...(c.bullets?.length ? [...c.bullets.map((b) => `• ${b}`), ""] : []),
     ...(c.cta ? [`${c.cta.label}: ${c.cta.url}`, ""] : []),
     ...(c.footer ? ["—", c.footer] : []),
+    ...(c.unsubscribe ? [`${c.unsubscribe.label}: ${c.unsubscribe.url}`] : []),
   ]
     .join("\n")
     .trim();
@@ -37,7 +39,7 @@ export function renderEmail(c: EmailContent): { text: string; html: string } {
 ${c.paragraphs.map((p) => `<tr><td style="padding:6px 24px;font-size:16px;line-height:1.5">${escapeHtml(p)}</td></tr>`).join("\n")}
 ${c.bullets?.length ? `<tr><td style="padding:6px 24px"><ul style="margin:0;padding-left:20px;font-size:15px;line-height:1.6">${c.bullets.map((b) => `<li>${escapeHtml(b)}</li>`).join("")}</ul></td></tr>` : ""}
 ${c.cta ? `<tr><td style="padding:14px 24px"><a href="${escapeHtml(c.cta.url)}" style="display:inline-block;background:#0284c7;color:#ffffff;text-decoration:none;font-weight:bold;padding:12px 18px;border-radius:8px">${escapeHtml(c.cta.label)}</a></td></tr>` : ""}
-${c.footer ? `<tr><td style="padding:14px 24px 20px;font-size:12px;color:#64748b;border-top:1px solid #e2e8f0">${escapeHtml(c.footer)}</td></tr>` : ""}
+${c.footer || c.unsubscribe ? `<tr><td style="padding:14px 24px 20px;font-size:12px;color:#64748b;border-top:1px solid #e2e8f0">${c.footer ? escapeHtml(c.footer) : ""}${c.unsubscribe ? ` <a href="${escapeHtml(c.unsubscribe.url)}" style="color:#64748b">${escapeHtml(c.unsubscribe.label)}</a>` : ""}</td></tr>` : ""}
 </table></td></tr></table></body></html>`;
   return { text, html };
 }

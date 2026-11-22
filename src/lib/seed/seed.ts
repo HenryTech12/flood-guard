@@ -211,8 +211,8 @@ export async function seedDatabase(sql: Sql, region: RegionConfig, opts: SeedOpt
     }
 
     const inserted = await tx<{ id: string; phone: string }[]>`
-      insert into residents (phone, name, email, preferred_language, home, zone_id, consent_location, consent_at, registered_by, is_seed)
-      select x.phone, x.name, x.email, x.lang, ST_SetSRID(ST_MakePoint(x.lng, x.lat), 4326), x.zone_id, true, now(), 'seed', true
+      insert into residents (phone, name, email, email_verified_at, preferred_language, home, zone_id, consent_location, consent_at, registered_by, is_seed)
+      select x.phone, x.name, x.email, case when x.email is not null then now() end, x.lang, ST_SetSRID(ST_MakePoint(x.lng, x.lat), 4326), x.zone_id, true, now(), 'seed', true
       from jsonb_to_recordset(${JSON.stringify(residents)}::text::jsonb) as x(phone text, name text, email text, lang text, zone_id text, lng float8, lat float8)
       returning id, phone`;
     const idByPhone = new Map(inserted.map((r) => [r.phone, r.id]));

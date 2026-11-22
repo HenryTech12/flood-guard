@@ -11,6 +11,7 @@ import { enqueue, processOutbox, type OutboundMessage } from "../messaging/outbo
 import { publishChange } from "../realtime/server";
 import { audit } from "./audit";
 import { isEmail } from "../messaging/email";
+import { unsubscribeUrl } from "./emailSignup";
 import { alertEmail } from "./notify";
 import { nearestShelters } from "./reference";
 
@@ -53,8 +54,9 @@ export async function sendZoneAlerts(
   const [shelter] = await nearestShelters(sql, [z.lng, z.lat], { needSpace: 10, limit: 1 });
   const vars = { zone: z.short_name, shelter: shelter?.name ?? "the nearest high ground", shortcode: region.smsShortcode, ussd: region.ussdCode };
 
-  const residents = await sql<{ id: string; phone: string; email: string | null; preferred_language: Lang; alerts_opt_out: boolean }[]>`
-    select id, phone, email, preferred_language, alerts_opt_out from residents where zone_id = ${zoneId}`;
+  const residents = await sql<{ id: string; phone: string; email: string | null; email_ok: boolean; preferred_language: Lang; alerts_opt_out: boolean }[]>`
+    select id, phone, email, (email_verified_at is not null and not email_opt_out) email_ok, preferred_language, alerts_opt_out
+    from residents where zone_id = ${zoneId}`;
   const last = await sql<{ resident_id: string; channel: string; level: RiskLevel; sent_at: Date }[]>`
     select resident_id, channel, level, sent_at from alert_deliveries where resident_id = any(${residents.map((r) => r.id)}::uuid[])`;
   const lastBy = new Map(last.map((l) => [`${l.resident_id}:${l.channel}`, l]));
@@ -70,7 +72,7 @@ export async function sendZoneAlerts(
     }
     for (const ch of channels) {
       if (ch === "voice" && levelIndex(lvl) < levelIndex("high")) continue; // voice only for HIGH+
-      if (ch === "email" && !isEmail(r.email)) continue; // email only if the resident gave one
+      if (ch === "email" && !(r.email_ok && isEmail(r.email))) continue; // only confirmed, subscribed addresses
       const prev = lastBy.get(`${r.id}:${ch}`);
       const decision = shouldSendAlert(lvl, prev ? { level: prev.level, sentAt: prev.sent_at } : null, now, { force, cooldownMin: env.alertCooldownMin });
       if (!decision.send) {
@@ -87,7 +89,7 @@ export async function sendZoneAlerts(
       if (ch === "email") {
         bucket.email++;
         summary.email++;
-        const e = alertEmail(lang, lvl, { zone: z.short_name, shelter: vars.shelter });
+        const e = alertEmail(lang, lvl, { zone: z.short_name, shelter: vars.shelter }, await unsubscribeUrl(r.id, r.email!));
         msgs.push({ channel: "email", to: r.email!, subject: e.subject, body: e.text, html: e.html, language: rendered.lang, purpose: "alert", refType: "zone", refId: zoneId });
       } else if (ch === "sms") {
         bucket.sms++;

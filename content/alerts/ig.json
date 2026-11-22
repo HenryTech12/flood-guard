@@ -91,6 +91,12 @@
     "safe_subject": "",
     "safe_rescued": "",
     "safe_checkin": "",
-    "footer": ""
+    "footer": "",
+    "verify_subject": "",
+    "verify_title": "",
+    "verify_body": "",
+    "verify_cta": "",
+    "verify_ignore": "",
+    "unsubscribe": ""
   }
 }

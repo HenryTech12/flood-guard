@@ -8,6 +8,13 @@ import { tx as tr } from "@/lib/i18n/templates";
 import { sendNow } from "@/lib/messaging/outbox";
 import { registerResident } from "@/lib/services/residents";
 import { LANG_NAMES } from "@/lib/core/types";
+import { env } from "@/lib/env";
+import { sendVerificationIfNeeded } from "@/lib/services/emailSignup";
+
+/** In demo mode with the mock email provider, hand the confirm link back so the demo works without an inbox. */
+function demoLink(url?: string) {
+  return env.demoMode && env.emailProvider === "mock" && url ? new URL(url).pathname + new URL(url).search : null;
+}
 
 export const dynamic = "force-dynamic";
 
@@ -54,5 +61,6 @@ export const POST = handle(async (req: Request) => {
   });
   const [z_] = await sql<{ short_name: string }[]>`select short_name from zones where id = ${b.zoneId}`;
   await sendNow(sql, [{ channel: "sms", to: b.phone, body: tr(b.lang, "sms.register_ack", { name: b.name, zone: z_?.short_name ?? b.zoneId, language: LANG_NAMES[b.lang] }), language: b.lang, purpose: "register_ack" }]);
-  return json({ ok: true, created: r.created });
+  const verify = await sendVerificationIfNeeded(sql, r.id);
+  return json({ ok: true, created: r.created, emailVerification: verify.sent ? "sent" : (verify.reason ?? null), demoVerifyUrl: demoLink(verify.url) });
 });

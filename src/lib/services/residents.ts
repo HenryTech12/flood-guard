@@ -54,16 +54,24 @@ export interface RegisterInput {
   mode?: "replace" | "append";
 }
 
+export class RegistrationError extends Error {}
+
 export async function registerResident(sql: Sql, input: RegisterInput): Promise<{ id: string; zoneId: string | null; created: boolean }> {
   if (!input.consent) throw new Error("Consent is required to register");
   const zoneId = input.zoneId ?? (input.home ? await zoneForPoint(sql, input.home) : null);
   const res = await sql.begin(async (tx) => {
     const [existing] = await tx<{ id: string }[]>`select id from residents where phone = ${input.phone}`;
+    if (input.email) {
+      const [owner] = await tx<{ phone: string }[]>`select phone from residents where lower(email) = lower(${input.email}) and phone <> ${input.phone}`;
+      if (owner) throw new RegistrationError("This email is already registered with another phone number.");
+    }
     const [row] = await tx<{ id: string }[]>`
       insert into residents (phone, name, email, preferred_language, home, zone_id, consent_location, consent_at, registered_by)
       values (${input.phone}, ${input.name}, ${input.email || null}, ${input.lang}, ${pt(tx, input.home ?? null)}, ${zoneId}, ${!!input.home}, now(), ${input.registeredBy ?? "self"})
       on conflict (phone) do update set name = excluded.name, preferred_language = excluded.preferred_language,
         email = coalesce(excluded.email, residents.email),
+        email_verified_at = case when excluded.email is not null and lower(excluded.email) is distinct from lower(residents.email) then null else residents.email_verified_at end,
+        email_opt_out = case when excluded.email is not null and lower(excluded.email) is distinct from lower(residents.email) then false else residents.email_opt_out end,
         home = coalesce(excluded.home, residents.home), zone_id = coalesce(excluded.zone_id, residents.zone_id),
         consent_location = residents.consent_location or excluded.consent_location, consent_at = now(),
         registered_by = excluded.registered_by, alerts_opt_out = false

@@ -151,7 +151,7 @@ The brief's tables are all present (`supabase/migrations/0001_schema.sql`). I ma
 | `location_source` adds `unknown` | an unregistered SMS with no landmark is still accepted; the resident is asked to reply with a landmark |
 | `help_requests` + `ref_code`, `urgency_reasons`, `vulnerable` snapshot, `inside_flood`, `channel`, `merged_count`, `failed_attempts`, `close_reason` | references in replies, explainability, dispatch, audit |
 | `rescue_jobs` + `status`, `expires_at`, `operator_assigned` | ride-hailing offers; partial unique indexes give one live job per volunteer and per request |
-| `residents.email`, `family_contacts.email`, email columns on `outbound_messages`, `help_requests.ops_notified_at` (migration 0003) | optional email channel via Brevo |
+| `residents.email`, `family_contacts.email`, email columns on `outbound_messages`, `help_requests.ops_notified_at` (migration 0003); `residents.email_verified_at`, `email_opt_out`, unique email (migration 0004) | email channel via Brevo with double opt-in |
 | `inbound_messages` (unique provider id), `outbound_messages` (queue) | idempotent webhooks; retries with backoff; demo message log |
 | `alert_deliveries` | per-resident de-duplication of alerts |
 | `rainfall_readings`, `flood_extents`, `zone_risk_snapshots` | risk engine inputs and the timeline slider |
@@ -190,8 +190,10 @@ Email is an extra channel alongside SMS/voice, sent through the same outbox (ret
 |---|---|---|
 | SEMA staff (`OPS_NOTIFY_EMAILS`) | a zone rises to **HIGH/SEVERE** | level change, reasons, residents + vulnerable households, link to `/command` |
 | SEMA staff | a help request **first reaches** urgency ≥ `OPS_NOTIFY_MIN_URGENCY` (default 70) — at creation or later as zone risk/waiting time grow; once per request | urgency breakdown, people, location precision |
-| Residents with an email | flood alerts (MEDIUM+), same de-duplication as SMS | alert in their language (English fallback) |
+| Residents with a **confirmed** email | flood alerts (MEDIUM+), same de-duplication as SMS | alert in their language (English fallback) + unsubscribe link |
 | Family contacts with an email | rescue completed or SAFE check-in | "{name} is safe" |
+
+**Sign-up on the landing page.** Residents enter name, email, phone, area and language on `/` (phone stays required: SMS works without data and help requests are matched by phone). The email is **double opt-in**: FloodGuard sends a signed "Confirm my email" link (at most one per address every 10 minutes, so the public form can't be used to spam someone), and alert emails start only after it is clicked. Every alert email has a one-click unsubscribe link; SMS alerts are unaffected (STOP for those). One email address belongs to one phone. In demo mode with `EMAIL_PROVIDER=mock`, the confirm link is shown on screen.
 
 Setup:
 1. Create a Brevo account → **Senders, Domains & Dedicated IPs → Senders**: add and verify the sender address (authenticate your domain for better deliverability).
