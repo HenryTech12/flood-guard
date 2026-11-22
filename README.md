@@ -205,8 +205,9 @@ With `EMAIL_PROVIDER=mock` (default) emails are only logged. Seed data uses `@ex
 ## Deploying (Vercel + Supabase)
 
 1. **Supabase:** create a project → *Database → Extensions*: enable `postgis`. Copy the connection strings.
-2. **Migrate + seed** from your machine using the **session/direct** connection string:
-   `DATABASE_URL=<direct url> npm run setup`
+2. **Migrate + seed** — either
+   - from your machine using the **session pooler** connection string: `DATABASE_URL=<session pooler url> npm run setup`, or
+   - **no laptop needed:** after the first Vercel deploy, open `https://<app>/api/admin/setup?key=<DEMO_KEY>` once (or set `SETUP_KEY` and use that). It applies pending migrations and seeds the demo data **only if the database is empty**; it never wipes data, and is safe to open again after pulling new migrations.
 3. **Vercel:** import the repo and set environment variables:
    - `DATABASE_URL` = the **transaction pooler** URL (port 6543)
    - `AUTH_SECRET`, `DEMO_MODE`, `DEMO_KEY`, `MESSAGING_PROVIDER=mock`, `PUBLIC_BASE_URL=https://<app>.vercel.app`
