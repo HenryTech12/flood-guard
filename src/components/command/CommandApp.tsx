@@ -151,7 +151,8 @@ export default function CommandApp({ operatorName, demo }: { operatorName: strin
           <div className="leading-tight">
             <div className="text-xl font-black tracking-tight">FloodGuard</div>
             <div className="text-xs text-slate-400">
-              {view.region.name}, {view.region.state} · Command
+              {view.region.name}
+              {view.region.state !== view.region.name ? `, ${view.region.state}` : ""} · Command
             </div>
           </div>
         </Link>

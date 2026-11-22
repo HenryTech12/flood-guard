@@ -6,7 +6,7 @@
 import { expect, test, type APIRequestContext } from "@playwright/test";
 
 const DEMO_KEY = process.env.DEMO_KEY ?? "floodguard-demo";
-const RESIDENT = "+2348000000001"; // Mama Ngozi, Gadumo, Pidgin, elderly + child under 5
+const RESIDENT = "+2348000000001"; // Mama Ngozi, Makoko (Lagos), Pidgin, elderly + child under 5
 const FAMILY = ["+2348002000001", "+2348002000002"];
 
 interface Msg {
@@ -35,10 +35,10 @@ test("early warning → help → dispatch → rescue → family notified", async
   await cmd.goto("/command");
   await expect(cmd.getByTestId("command-map")).toBeVisible();
 
-  // 1. Risk rises to HIGH for Gadumo (via the demo control panel UI).
-  await page.getByTestId("zone-select").selectOption("gadumo");
+  // 1. Risk rises to HIGH for Makoko (via the demo control panel UI).
+  await page.getByTestId("zone-select").selectOption("makoko");
   await page.getByTestId("btn-raise").click();
-  await expect(page.getByTestId("demo-result")).toContainText("gadumo low→high");
+  await expect(page.getByTestId("demo-result")).toContainText("makoko low→high");
 
   // 2. Alerts went out automatically: SMS + voice, in each resident's language.
   const alerts = await messages(api, "alert");
@@ -48,11 +48,11 @@ test("early warning → help → dispatch → rescue → family notified", async
   expect(toResident.find((m) => m.channel === "sms")!.body).toContain("Carry pikin"); // Pidgin
   expect(alerts.some((m) => m.language === "en" && m.body.includes("FLOOD WARNING"))).toBeTruthy();
   // Re-sending immediately is de-duplicated.
-  const again = await (await api.post("/api/demo/send-alerts", { data: { zoneId: "gadumo" } })).json();
+  const again = await (await api.post("/api/demo/send-alerts", { data: { zoneId: "makoko" } })).json();
   expect(again.summaries[0].sms).toBe(0);
   // The command map shows the zone as HIGH without a refresh.
   await cmd.getByRole("button", { name: "Risk zones" }).click();
-  await expect(cmd.getByTestId("zone-gadumo")).toContainText("HIGH");
+  await expect(cmd.getByTestId("zone-makoko")).toContainText("HIGH");
   await cmd.getByRole("button", { name: /Queue/ }).click();
 
   // 3. Resident sends HELP from the phone simulator (real SMS webhook).
@@ -86,7 +86,7 @@ test("early warning → help → dispatch → rescue → family notified", async
   await expect(detail).toContainText("Accepted");
 
   // Live position update moves the boat and flips the request to En route.
-  expect((await vol.request.post("/api/volunteer/location", { data: { lngLat: [6.7595, 7.8045] } })).ok()).toBeTruthy();
+  expect((await vol.request.post("/api/volunteer/location", { data: { lngLat: [3.3935, 6.4935] } })).ok()).toBeTruthy();
   await expect(row).toContainText("En route");
 
   // 6. Rescued → pin turns green, family gets "is safe".
@@ -126,8 +126,8 @@ test("USSD help request from an unregistered basic phone", async ({ browser }) =
     ["4", "Anyone elderly"],
     ["1", "Who needs extra care"],
     ["1", "Choose your area"],
-    ["3", "Nearest landmark"],
-    ["1", "Send help for 4 people near Kpata Market"],
+    ["1", "Nearest landmark"],
+    ["1", "Send help for 4 people near Makoko Waterfront"],
     ["1", "Help request FG-1001 received"],
   ]) {
     await page.getByTestId("ussd-input").fill(input);
@@ -137,7 +137,7 @@ test("USSD help request from an unregistered basic phone", async ({ browser }) =
   const state = await (await page.request.get("/api/state")).json();
   const req = state.requests.find((r: { ref: string }) => r.ref === "FG-1001");
   expect(req.locationSource).toBe("ussd_landmark");
-  expect(req.landmark).toBe("Kpata Market");
+  expect(req.landmark).toBe("Makoko Waterfront");
   expect(req.registered).toBe(false);
   const labels = req.reasons.map((r: { label: string }) => r.label);
   expect(labels).toContain("Vulnerable: elderly");
@@ -158,7 +158,7 @@ test("landing-page sign-up → confirm email → alert email → unsubscribe", a
   await form.getByLabel("Name", { exact: true }).fill("Amina Testfake");
   await form.getByLabel("Email", { exact: true }).fill(email);
   await form.getByLabel("Phone", { exact: true }).fill(`0800${String(Date.now()).slice(-7)}`);
-  await form.getByLabel("Area", { exact: true }).selectOption("ganaja");
+  await form.getByLabel("Area", { exact: true }).selectOption("lekki");
   await form.getByRole("checkbox").check();
   await form.getByRole("button", { name: "Sign up" }).click();
   await expect(page.getByTestId("signup-done")).toContainText(email);
@@ -166,7 +166,7 @@ test("landing-page sign-up → confirm email → alert email → unsubscribe", a
   // A confirmation email was queued; no alert emails until it is confirmed.
   const verify = (await messages(api, "email_verify")).find((m) => m.to === email);
   expect(verify?.body).toContain("Confirm my email");
-  await api.post("/api/demo/raise-zone", { data: { zoneId: "ganaja", level: "medium" } });
+  await api.post("/api/demo/raise-zone", { data: { zoneId: "lekki", level: "medium" } });
   expect((await messages(api, "alert")).some((m) => m.to === email)).toBe(false);
 
   // Confirm (demo mode shows the link because the mock provider has no inbox).
@@ -174,7 +174,7 @@ test("landing-page sign-up → confirm email → alert email → unsubscribe", a
   await expect(page.getByTestId("email-banner")).toContainText("Email confirmed");
 
   // Escalation → the confirmed address gets the alert email, with an unsubscribe link.
-  await api.post("/api/demo/raise-zone", { data: { zoneId: "ganaja", level: "high" } });
+  await api.post("/api/demo/raise-zone", { data: { zoneId: "lekki", level: "high" } });
   const alert = (await messages(api, "alert")).find((m) => m.to === email && m.channel === "email");
   expect(alert?.body).toContain("Stop alert emails");
   const unsub = alert!.body.match(/Stop alert emails: (\S+)/)![1];
@@ -183,32 +183,40 @@ test("landing-page sign-up → confirm email → alert email → unsubscribe", a
 
   // Unsubscribed → a later escalation sends no email (SMS still goes out).
   const before = (await messages(api, "alert")).filter((m) => m.to === email).length;
-  await api.post("/api/demo/raise-zone", { data: { zoneId: "ganaja", level: "severe" } });
+  await api.post("/api/demo/raise-zone", { data: { zoneId: "lekki", level: "severe" } });
   expect((await messages(api, "alert")).filter((m) => m.to === email).length).toBe(before);
   await ctx.close();
 });
 
-test("sign-up form auto-detects the area from the device location", async ({ browser }) => {
-  // A phone standing in Gadumo / Kpata, Lokoja.
-  const inLokoja = await browser.newContext({ geolocation: { latitude: 7.8045, longitude: 6.7585 }, permissions: ["geolocation"] });
-  const p1 = await inLokoja.newPage();
+test("sign-up form auto-detects the area, and works outside the covered areas", async ({ browser }) => {
+  // A phone in Makoko, Lagos → area pre-selected.
+  const inLagos = await browser.newContext({ geolocation: { latitude: 6.494, longitude: 3.392 }, permissions: ["geolocation"] });
+  const p1 = await inLagos.newPage();
   await p1.goto("/");
   await expect(p1.getByTestId("locate-status")).toContainText("Detected from your location");
-  await expect(p1.getByTestId("signup").getByLabel("Area", { exact: true })).toHaveValue("gadumo");
-  await inLokoja.close();
-
-  // A phone in Lagos: outside the covered region → asks the user to choose.
-  const inLagos = await browser.newContext({ geolocation: { latitude: 6.5158, longitude: 3.3898 }, permissions: ["geolocation"] });
-  const p2 = await inLagos.newPage();
-  await p2.goto("/");
-  await expect(p2.getByTestId("locate-status")).toContainText("outside Lokoja");
-  await expect(p2.getByTestId("signup").getByLabel("Area", { exact: true })).toHaveValue("");
+  await expect(p1.getByTestId("signup").getByLabel("Area", { exact: true })).toHaveValue("makoko");
   await inLagos.close();
+
+  // A phone in Ibadan (not covered yet) → can still sign up with their town.
+  const inIbadan = await browser.newContext({ geolocation: { latitude: 7.3775, longitude: 3.947 }, permissions: ["geolocation"] });
+  const p2 = await inIbadan.newPage();
+  await p2.goto("/");
+  await expect(p2.getByTestId("locate-status")).toContainText("live in Lagos first");
+  const form = p2.getByTestId("signup");
+  await expect(form.getByLabel("Area", { exact: true })).toHaveValue("__other");
+  await form.getByLabel("Name", { exact: true }).fill("Tolu Ibadanfake");
+  await form.getByLabel("Email", { exact: true }).fill(`tolu.${Date.now()}@example.com`);
+  await form.getByLabel("Phone", { exact: true }).fill(`0809${String(Date.now()).slice(-7)}`);
+  await form.getByLabel("Town", { exact: true }).fill("Ibadan");
+  await form.getByRole("checkbox").check();
+  await form.getByRole("button", { name: "Sign up" }).click();
+  await expect(p2.getByTestId("signup-done")).toContainText("saved your town");
+  await inIbadan.close();
 
   // Permission refused → manual choice, no error.
   const denied = await browser.newContext({ permissions: [] });
   const p3 = await denied.newPage();
   await p3.goto("/");
-  await expect(p3.getByTestId("locate-status")).toContainText(/blocked|try again/);
+  await expect(p3.getByTestId("locate-status")).toContainText(/Location is off|try again/);
   await denied.close();
 });

@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { postJson, useHeartbeat, useLiveJson } from "@/lib/client/live";
 import type { LiveState } from "@/lib/types/state";
 import { LEVEL_BG } from "@/components/ui";
+import { getRegion } from "../../../config/regions";
 
 interface Msg {
   id: number;
@@ -22,8 +23,8 @@ interface Msg {
 
 const STEPS = [
   "Open /command on the projector (2nd screen).",
-  "Start rainfall replay → Gadumo & Ganaja turn HIGH; alerts go out in each resident's language.",
-  "On /sim (Mama Ngozi) type HELP 3 people roof → pin drops on the map, ranked by urgency.",
+  "Start rainfall replay → the low-lying zones turn HIGH; alerts go out in each resident's language.",
+  "On /sim (Mama Ngozi, first preset) type HELP 3 people roof → pin drops on the map, ranked by urgency.",
   "On a phone open /volunteer as the demo captain (OTP 123456) → Accept.",
   "Tick “simulate my travel” → boat moves on the map.",
   "Press Rescued → pin turns green; family gets “is safe” SMS (see log / sim).",
@@ -33,7 +34,7 @@ export default function DemoPanel() {
   const { data: live, refetch } = useLiveJson<LiveState>("/api/state", { pollMs: 3000 });
   const { data: log, refetch: refetchLog } = useLiveJson<{ provider: string; emailProvider: string; counts: { total: number; queued: number; failed: number }; messages: Msg[] }>("/api/messages?limit=60", { pollMs: 2500 });
   useHeartbeat(1000);
-  const [zone, setZone] = useState("gadumo");
+  const [zone, setZone] = useState(getRegion().demoZones[0]);
   const [level, setLevel] = useState("high");
   const [force, setForce] = useState(false);
   const [speed, setSpeed] = useState(4);

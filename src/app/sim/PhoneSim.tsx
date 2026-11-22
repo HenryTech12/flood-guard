@@ -17,9 +17,10 @@ interface Preset {
   label: string;
 }
 
-const QUICK = ["HELP 3 people roof", "help us water dey rise", "SAFE", "WATER knee Kpata Market", "ROAD blocked Ganaja Junction", "SHELTER"];
+const quickMessages = (landmark: string) => ["HELP 3 people roof", "help us water dey rise", "SAFE", `WATER knee ${landmark}`, `ROAD blocked ${landmark}`, "SHELTER"];
 
-export default function PhoneSim({ presets, ussdCode, shortcode }: { presets: Preset[]; ussdCode: string; shortcode: string }) {
+export default function PhoneSim({ presets, ussdCode, shortcode, exampleLandmark }: { presets: Preset[]; ussdCode: string; shortcode: string; exampleLandmark: string }) {
+  const QUICK = quickMessages(exampleLandmark);
   const [phone, setPhone] = useState(presets[0].phone);
   const [custom, setCustom] = useState("");
   const [mode, setMode] = useState<"sms" | "ussd">("sms");

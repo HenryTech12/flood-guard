@@ -25,7 +25,11 @@ export const lokoja: RegionConfig = {
     rainfall: "imerg_2022_zones.json",
     baseRisk: "zone_base_risk.json",
     basemap: "basemap_lokoja.geojson",
+    zones: "zones.geojson",
   },
+  agency: "Kogi SEMA",
+  demoZones: ["gadumo", "ganaja", "adankolo"],
+  exampleLandmark: "Kpata Market",
   demoResidentPhone: "+2348000000001",
   demoVolunteerPhone: "+2348001000001",
   zones: [

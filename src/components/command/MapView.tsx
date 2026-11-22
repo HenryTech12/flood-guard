@@ -53,9 +53,9 @@ function baseStyle(): StyleSpecification {
       },
     },
     layers: [
-      { id: "bg", type: "background", paint: { "background-color": "#0b1220" } },
+      { id: "bg", type: "background", paint: { "background-color": "#0b2a5c" } },
       // Offline fallback basemap (approximate). Hidden underneath the raster tiles when online.
-      { id: "offline-water", type: "fill", source: "offline", filter: ["==", ["get", "kind"], "water"], paint: { "fill-color": "#12304d" } },
+      { id: "offline-water", type: "fill", source: "offline", filter: ["==", ["get", "kind"], "water"], paint: { "fill-color": "#16508f" } },
       { id: "offline-roads", type: "line", source: "offline", filter: ["==", ["get", "kind"], "road"], paint: { "line-color": "#475569", "line-width": 2 } },
       { id: "carto", type: "raster", source: "carto", paint: { "raster-opacity": 0.92 } },
     ],

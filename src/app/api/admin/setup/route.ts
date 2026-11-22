@@ -22,12 +22,22 @@ async function run(req: Request) {
   const log: string[] = [];
   try {
     const applied = await runMigrations(sql, { log: (m) => log.push(m) });
-    const [{ n }] = await sql<{ n: number }[]>`select count(*)::int n from zones`;
+    const region = getRegion();
+    const [{ n, mine }] = await sql<{ n: number; mine: number }[]>`
+      select count(*)::int n, count(*) filter (where region_id = ${region.id})::int mine from zones`;
+    const switching = new URL(req.url).searchParams.get("switch") === "1";
     let seeded = false;
-    if (n === 0) {
-      await seedDatabase(sql, getRegion(), { dataDir: path.join(process.cwd(), "public", "data"), log: (m) => log.push(m) });
+    if (n === 0 || (mine === 0 && switching)) {
+      if (n > 0) log.push(`Replacing the previous region's demo data with ${region.name} (all existing data is removed).`);
+      await seedDatabase(sql, region, { dataDir: path.join(process.cwd(), "public", "data"), log: (m) => log.push(m) });
       seeded = true;
-    } else log.push(`Database already has ${n} zones — not seeding (existing data is kept).`);
+    } else if (mine === 0) {
+      return Response.json({
+        ok: false,
+        error: `The database holds another region's data, but this deployment is configured for ${region.name}. Open this link again with &switch=1 to replace it (this deletes ALL existing data, including sign-ups).`,
+        log,
+      }, { status: 409 });
+    } else log.push(`Database already has ${n} ${region.name} zones — not seeding (existing data is kept).`);
     return Response.json({ ok: true, migrationsApplied: applied, seeded, log, next: seeded ? "Open / or /demo?key=<DEMO_KEY>" : "Nothing else to do" });
   } catch (e) {
     console.error(e);

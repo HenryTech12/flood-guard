@@ -25,7 +25,7 @@ const STAGE = `<!doctype html><html><head><meta charset="utf-8"><title>FloodGuar
 <div id="title"><div style="text-align:center">
   <div style="font-size:96px;font-weight:900;letter-spacing:-.03em">🛡️ FloodGuard</div>
   <div style="font-size:36px;color:#7dd3fc;margin-top:8px;font-weight:700">From early warning to rescue</div>
-  <div style="font-size:24px;color:#94a3b8;margin-top:18px">Lokoja, Kogi State · Niger–Benue confluence · demo with fictional people</div>
+  <div style="font-size:24px;color:#94a3b8;margin-top:18px">Live in Lagos first · expanding across Nigeria · demo with fictional people</div>
 </div></div>
 <div id="cap"><div id="step">▶</div><div><div id="txt">FloodGuard</div><div id="sub"></div></div></div>
 <div class="row">
@@ -68,7 +68,7 @@ const STAGE = `<!doctype html><html><head><meta charset="utf-8"><title>FloodGuar
   await wait(4000);
 
   // 1. Sense.
-  await cap('1', 'Sense: satellite rainfall builds over Lokoja', 'NASA IMERG rainfall replay, 1–5 Oct 2022 · risk engine scores every zone');
+  await cap('1', 'Sense: satellite rainfall builds over Lagos', 'Rainfall replay (synthetic IMERG-format data) · risk engine scores every zone');
   await api.post(`${B}/api/demo/start-replay`, { data: { speed: 10 } });
   await cmd.getByRole('button', { name: 'Risk zones' }).click();
   await wait(9000);

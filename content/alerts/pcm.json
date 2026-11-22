@@ -2,7 +2,7 @@
   "_meta": {
     "lang": "pcm",
     "status": "DRAFT",
-    "notes": "Nigerian Pidgin drafted by the dev team. Used live, but please have a native Pidgin speaker from Lokoja review wording before real deployment."
+    "notes": "Nigerian Pidgin drafted by the dev team. Used live, but please have a native Pidgin speaker from the community review wording before real deployment."
   },
   "alert": {
     "medium": "FloodGuard {zone}: Flood fit come. Rain dey fall well well. Carry your property go up, charge phone, know your shelter: {shelter}. Need help? SMS HELP to {shortcode} or dial {ussd}",
@@ -29,7 +29,7 @@
   },
   "sms": {
     "help_ack": "FloodGuard: We don receive your help request {ref} ({people} people). Stay for the highest safe place. Rescuers dey come. Reply anytime with more info.",
-    "help_ack_unlocated": "FloodGuard: We don receive help request {ref}. We no know where you dey: reply with your area and landmark wey near you (e.g. Kpata Market).",
+    "help_ack_unlocated": "FloodGuard: We don receive help request {ref}. We no know where you dey: reply with your area and landmark wey near you (e.g. a market, school or bus stop).",
     "help_merged": "FloodGuard: Request {ref} don update ({people} people). Rescuers don see am.",
     "location_updated": "FloodGuard: Thank you. Location for {ref} na near {place}.",
     "rescuer_assigned": "FloodGuard: Rescuer ({vtype}) don accept {ref} and e dey come. Stay where you dey if e safe.",

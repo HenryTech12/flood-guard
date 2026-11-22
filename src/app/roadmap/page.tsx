@@ -25,7 +25,7 @@ const POST_FLOOD = [
 
 const NEXT = [
   "Live IMERG Early Run ingestion every 30 min (Earth Engine scheduled export) instead of replay",
-  "Upstream river gauges and dam-release notices (Lagdo, Kainji/Jebba) in the risk engine — the 2022 Lokoja flood was driven by river flow, not only local rain",
+  "River gauges, tide levels and dam-release notices in the risk engine — many Nigerian floods are driven by river flow and coastal surge, not only local rain",
   "Native-speaker Hausa, Yoruba and Igbo templates + recorded voice prompts",
   "Real Africa's Talking shortcode and USSD code with telco zero-rating",
   "WhatsApp channel for residents with smartphones",

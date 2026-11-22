@@ -153,13 +153,12 @@ export async function seedDatabase(sql: Sql, region: RegionConfig, opts: SeedOpt
       const l = zoneCfg(zoneId).landmarks[idx]?.location ?? ringCentroid(zoneCfg(zoneId).polygon);
       return [l[0] + d[0], l[1] + d[1]];
     };
-    const z0 = region.zones.find((z) => z.id === "gadumo")?.id ?? region.zones[0].id;
-    const z1 = region.zones.find((z) => z.id === "ganaja")?.id ?? region.zones[1 % region.zones.length].id;
-    const z2 = region.zones.find((z) => z.id === "adankolo")?.id ?? region.zones[2 % region.zones.length].id;
+    const pick = (i: number) => (region.demoZones[i] && region.zones.some((z) => z.id === region.demoZones[i]) ? region.demoZones[i] : region.zones[i % region.zones.length].id);
+    const [z0, z1, z2] = [pick(0), pick(1), pick(2)];
     const named: R[] = [
       {
         phone: region.demoResidentPhone, name: "Mama Ngozi Adefake", lang: "pcm", zone_id: z0,
-        ...((([lng, lat]) => ({ lng, lat }))(lmLoc(z0, 1, [-0.0015, -0.0005]))),
+        ...((([lng, lat]) => ({ lng, lat }))(region.demoResidentHome ?? lmLoc(z0, 1, [-0.0015, -0.0005]))),
         vulnerable: [{ type: "elderly", count: 1 }, { type: "child_under5", count: 1 }],
         family: [{ phone: famPhone(), name: "Chinedu Adefake (son)", email: "chinedu.adefake@example.com" }, { phone: famPhone(), name: "Ada Adefake (daughter)" }],
       },
@@ -227,7 +226,7 @@ export async function seedDatabase(sql: Sql, region: RegionConfig, opts: SeedOpt
     const pw = opts.operatorPassword ?? process.env.SEED_OPERATOR_PASSWORD ?? "floodguard-demo";
     const hash = bcrypt.hashSync(pw, 10);
     await tx`insert into app_users (email, name, role, password_hash) values
-      ('operator@floodguard.demo', 'Demo Operator (Kogi SEMA)', 'operator', ${hash}),
+      ('operator@floodguard.demo', ${`Demo Operator (${region.agency})`}, 'operator', ${hash}),
       ('admin@floodguard.demo', 'Demo Admin', 'admin', ${hash})`;
 
     await tx`insert into audit_log (actor, entity, entity_id, action, details) values ('system', 'demo', 'seed', 'seeded', ${tx.json({ region: region.id, residents: residents.length })})`;

@@ -1,6 +1,24 @@
 @import "tailwindcss";
 
 @theme {
+  /* FloodGuard palette: the neutral "slate" scale is remapped to blues so every page
+     shares one deep-blue background with light-blue text and accents.
+     Red = warnings / danger, green = safe / success. */
+  --color-slate-50: #eef6ff;
+  --color-slate-100: #dcedff;
+  --color-slate-200: #c4e2ff;
+  --color-slate-300: #a6d3ff;
+  --color-slate-400: #86bdf2;
+  --color-slate-500: #6199d4;
+  --color-slate-600: #3f7cc0;
+  --color-slate-700: #2b62a5;
+  --color-slate-800: #1e4f8d;
+  --color-slate-900: #153f78;
+  --color-slate-950: #0c2c61;
+  --color-brand-deep: #0a2452;
+  --color-brand: #0b4ea2;
+  --color-brand-light: #8fd0ff;
+  --color-brand-pale: #e6f3ff;
   --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif;
   --font-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
   --color-risk-low: #22c55e;
@@ -11,8 +29,13 @@
 
 html,
 body {
-  background: #020617;
-  color: #e2e8f0;
+  background: #0a2452;
+  color: #eef6ff;
+}
+body {
+  background: radial-gradient(1200px 600px at 15% -10%, #1a5bb5 0%, transparent 60%), radial-gradient(900px 500px at 100% 0%, #0f4a9e 0%, transparent 55%),
+    linear-gradient(180deg, #0c2f68 0%, #0a2452 100%);
+  background-attachment: fixed;
 }
 
 /* ---------- map markers ---------- */

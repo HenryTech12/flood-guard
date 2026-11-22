@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { error, handle, json, requireDemo } from "@/lib/api";
 import { getSql } from "@/lib/db/client";
+import { getRegion } from "../../../../../config/regions";
 import { RISK_LEVELS } from "@/lib/core/types";
 import { clearOverrides, injectHelpRequests, raiseZone, resetDemo, sendAlertsFor, setDemoFlags, startReplay, stopReplay } from "@/lib/services/demo";
 import { runTick } from "@/lib/services/tick";
@@ -33,7 +34,7 @@ export const POST = handle(async (req: Request, ctx: { params: Promise<{ action:
       await stopReplay(sql);
       return json({ ok: true });
     case "raise-zone":
-      return json(await raiseZone(sql, b.zoneId ?? "gadumo", b.level ?? "high"));
+      return json(await raiseZone(sql, b.zoneId ?? getRegion().demoZones[0], b.level ?? "high"));
     case "clear-overrides":
       await clearOverrides(sql);
       return json({ ok: true });

@@ -29,7 +29,7 @@
   },
   "sms": {
     "help_ack": "FloodGuard: Help request {ref} received ({people} people). Stay on the highest safe point. Rescuers are being sent. Reply anytime with more details.",
-    "help_ack_unlocated": "FloodGuard: Help request {ref} received. We need your location: reply with your area and nearest landmark (e.g. Kpata Market).",
+    "help_ack_unlocated": "FloodGuard: Help request {ref} received. We need your location: reply with your area and nearest landmark (e.g. a market, school or bus stop).",
     "help_merged": "FloodGuard: Request {ref} updated ({people} people). Rescuers have the new details.",
     "location_updated": "FloodGuard: Thank you. Location for {ref} set near {place}.",
     "rescuer_assigned": "FloodGuard: A rescuer ({vtype}) accepted {ref} and is on the way. Stay where you are if it is safe.",

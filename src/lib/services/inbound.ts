@@ -110,7 +110,7 @@ export async function handleInboundSms(sql: Sql, msg: InboundSms): Promise<Inbou
         await createCrowdReport(sql, { phone: from, location: loc.lngLat, locationSource: loc.source, zoneId: loc.zoneId, landmarkId: loc.landmarkId, type: parsed.reportType, depthCm: parsed.depthCm, description: msg.text, channel: "sms" });
         reply = tr(lang, "sms.report_ack", { place: ` near ${placeLabel(loc, zones)}` });
       } else {
-        reply = tr(lang, "sms.report_ack", { place: " (add a landmark next time, e.g. WATER knee Kpata Market)" });
+        reply = tr(lang, "sms.report_ack", { place: ` (add a landmark next time, e.g. WATER knee ${getRegion().exampleLandmark})` });
       }
       break;
     }

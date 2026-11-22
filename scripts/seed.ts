@@ -1,7 +1,7 @@
 /**
- * Seeds the database for a region (default: REGION env or "lokoja").
+ * Seeds the database for a region (default: REGION env or "lagos").
  *   npm run db:seed
- *   REGION=lokoja npm run db:seed
+ *   REGION=lokoja npm run db:seed   # switch region
  * WARNING: truncates all FloodGuard tables first.
  */
 import "dotenv/config";

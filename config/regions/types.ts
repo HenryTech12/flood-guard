@@ -66,7 +66,20 @@ export interface RegionConfig {
     rainfall: string;
     baseRisk: string;
     basemap: string;
+    /** Zone polygons exported for the /geo Earth Engine scripts. */
+    zones: string;
   };
+  /** Emergency agency name shown to operators (e.g. "LASEMA"). */
+  agency: string;
+  /** Approximate water bodies and main roads for the generated offline basemap. */
+  waterBodies?: { name: string; polygon: LngLat[] }[];
+  roads?: { name: string; line: LngLat[] }[];
+  /** Zones used by the demo script and seeded demo residents, most important first. */
+  demoZones: string[];
+  /** Home of the seeded demo resident (Mama Ngozi); defaults to near a landmark of demoZones[0]. */
+  demoResidentHome?: LngLat;
+  /** A landmark name used in example messages ("WATER knee <landmark>"). */
+  exampleLandmark: string;
   zones: RegionZone[];
   shelters: RegionShelter[];
   volunteers: RegionVolunteer[];
