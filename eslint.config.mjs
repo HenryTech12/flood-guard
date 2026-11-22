@@ -5,14 +5,19 @@ import nextTs from "eslint-config-next/typescript";
 const eslintConfig = defineConfig([
   ...nextVitals,
   ...nextTs,
-  // Override default ignores of eslint-config-next.
-  globalIgnores([
-    // Default ignores of eslint-config-next:
-    ".next/**",
-    "out/**",
-    "build/**",
-    "next-env.d.ts",
-  ]),
+  {
+    // React Compiler advisory rules: our live-data hooks intentionally sync external state
+    // (timers, EventSource, geolocation) into React state. Keep them visible as warnings.
+    rules: {
+      "react-hooks/set-state-in-effect": "warn",
+      "react-hooks/purity": "warn",
+      "react-hooks/refs": "warn",
+      "react-hooks/immutability": "warn",
+      "react-hooks/preserve-manual-memoization": "warn",
+      "@typescript-eslint/no-unused-expressions": ["warn", { allowShortCircuit: true, allowTernary: true }],
+    },
+  },
+  globalIgnores([".next/**", "out/**", "build/**", "next-env.d.ts", "geo/**", "test-results/**", "playwright-report/**"]),
 ]);
 
 export default eslintConfig;
