@@ -54,3 +54,4 @@ __pycache__/
 .venv/
 geo/.ee-credentials*
 AGENTS.md
+demo-video/

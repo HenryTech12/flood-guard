@@ -47,8 +47,10 @@ export default function PhoneSim({ presets, ussdCode, shortcode }: { presets: Pr
     const t = setInterval(load, 1500);
     return () => clearInterval(t);
   }, [load]);
+  // Scroll only the phone's message list (scrollIntoView would also scroll the page/parent frame).
   useEffect(() => {
-    bottom.current?.scrollIntoView({ behavior: "smooth" });
+    const list = bottom.current?.parentElement;
+    if (list) list.scrollTo({ top: list.scrollHeight, behavior: "smooth" });
   }, [thread.length]);
 
   const sendSms = async (body: string) => {

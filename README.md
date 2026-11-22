@@ -55,6 +55,8 @@ Two screens: **projector** shows `/command`; **laptop** shows `/demo` and `/sim`
 
 The same flow runs automatically in `tests/e2e/core-flow.spec.ts` (≈11 s).
 
+**Demo video:** `node scripts/record-demo.cjs` records the whole flow (command map, phone simulator and volunteer app side by side, with captions) as a ~2-minute 1080p video. It resets the demo data first.
+
 ---
 
 ## Architecture
