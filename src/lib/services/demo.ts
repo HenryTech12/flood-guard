@@ -92,7 +92,9 @@ export async function injectHelpRequests(sql: Sql, count = 10) {
   const hotLm = hotZone.landmarks[Math.floor(rand() * hotZone.landmarks.length)];
   for (let i = 0; i < count; i++) {
     const msg = MESSAGES[Math.floor(rand() * MESSAGES.length)];
-    if (residents.length && rand() < 0.45) {
+    // First half of the batch: unregistered callers clustered at one landmark (→ hotspot).
+    const clustered = i < Math.ceil(count / 2);
+    if (!clustered && residents.length) {
       const r = residents.splice(Math.floor(rand() * Math.min(residents.length, count)), 1)[0];
       const res = await createOrMergeHelpRequest(sql, { phone: r.phone, channel: "demo", message: msg, peopleCount: null, skipDispatch: true, actor: "demo" });
       created.push(res.ref);
@@ -100,7 +102,7 @@ export async function injectHelpRequests(sql: Sql, count = 10) {
       // Unregistered caller who named a landmark.
       const zone = hotZone;
       const lm = hotLm;
-      const jitter: LngLat = [lm.location[0] + (rand() - 0.5) * 0.004, lm.location[1] + (rand() - 0.5) * 0.004];
+      const jitter: LngLat = [lm.location[0] + (rand() - 0.5) * 0.003, lm.location[1] + (rand() - 0.5) * 0.003];
       const phone = `+234800900${String(Math.floor(rand() * 10000)).padStart(4, "0")}`;
       const res = await createOrMergeHelpRequest(sql, {
         phone,

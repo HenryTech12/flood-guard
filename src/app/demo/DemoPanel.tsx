@@ -188,12 +188,12 @@ export default function DemoPanel() {
             <table className="w-full text-left text-sm">
               <thead className="sticky top-0 bg-slate-900 text-xs uppercase text-slate-500">
                 <tr>
-                  <th className="py-1">Time</th>
-                  <th>Ch</th>
-                  <th>To</th>
-                  <th>Lang</th>
-                  <th>Purpose</th>
-                  <th>Message</th>
+                  <th className="py-1 pr-2">Time</th>
+                  <th className="pr-2">Ch</th>
+                  <th className="pr-2">To</th>
+                  <th className="pr-2">Lang</th>
+                  <th className="pr-2">Purpose</th>
+                  <th className="pr-2">Message</th>
                   <th>Status</th>
                 </tr>
               </thead>

@@ -13,6 +13,6 @@ export const POST = handle(async (req: Request) => {
   if (!from) return error(400, "missing from");
   const sim = req.headers.get("x-floodguard-sim") === "1";
   const id = b.id || b.messageId || `${sim ? "sim" : "at"}-${from}-${b.date ?? ""}-${b.text ?? ""}`;
-  const result = await handleInboundSms(getSql(), { provider: sim ? "sim" : "africastalking", providerMessageId: id, from, text: b.text ?? "", channel: sim ? "demo" : "sms" });
+  const result = await handleInboundSms(getSql(), { provider: sim ? "sim" : "africastalking", providerMessageId: id, from, text: b.text ?? "", channel: "sms" });
   return json(result);
 });

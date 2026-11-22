@@ -43,16 +43,16 @@ interface OfferCreated {
 export async function runDispatch(sql: Sql, actor = "system"): Promise<OfferCreated[]> {
   const offers = await sql.begin(async (tx) => {
     await tx`select pg_advisory_xact_lock(424242)`;
-    const reqs = await tx<{ id: string; ref_code: string; lng: number; lat: number; inside_flood: boolean; people_count: number; urgency_score: number; vulnerable: { type: string }[] }[]>`
-      select h.id, h.ref_code, ST_X(h.location) lng, ST_Y(h.location) lat, h.inside_flood, h.people_count, h.urgency_score, h.vulnerable
+    const reqs = await tx<{ id: string; ref_code: string; lng: number; lat: number; inside_flood: boolean; people_count: number; urgency_score: number; vulnerable: { type: string }[]; channel: string }[]>`
+      select h.id, h.ref_code, ST_X(h.location) lng, ST_Y(h.location) lat, h.inside_flood, h.people_count, h.urgency_score, h.vulnerable, h.channel
       from help_requests h
       where h.status = 'new'
         and not exists (select 1 from rescue_jobs j where j.help_request_id = h.id and j.status = any(${LIVE}))
       order by h.urgency_score desc, h.created_at`;
     if (!reqs.length) return [] as OfferCreated[];
 
-    const vols = await tx<{ id: string; type: VolunteerType; capacity: number; lng: number; lat: number; is_available: boolean; has_live: boolean; phone: string }[]>`
-      select v.id, v.type, v.capacity, ST_X(v.current_location) lng, ST_Y(v.current_location) lat, v.is_available, v.phone,
+    const vols = await tx<{ id: string; type: VolunteerType; capacity: number; lng: number; lat: number; is_available: boolean; has_live: boolean; phone: string; is_simulated: boolean }[]>`
+      select v.id, v.type, v.capacity, ST_X(v.current_location) lng, ST_Y(v.current_location) lat, v.is_available, v.phone, v.is_simulated,
              exists(select 1 from rescue_jobs j where j.volunteer_id = v.id and j.status = any(${LIVE})) has_live
       from volunteers v where v.current_location is not null`;
     const excl = await tx<{ help_request_id: string; volunteer_id: string }[]>`
@@ -68,7 +68,12 @@ export async function runDispatch(sql: Sql, actor = "system"): Promise<OfferCrea
       insideFlood: r.inside_flood,
       peopleCount: r.people_count,
       needsMedical: (r.vulnerable ?? []).some((v) => v.type === "bedridden" || v.type === "pregnant"),
-      excluded: new Set(excl.filter((e) => e.help_request_id === r.id).map((e) => e.volunteer_id)),
+      excluded: new Set([
+        ...excl.filter((e) => e.help_request_id === r.id).map((e) => e.volunteer_id),
+        // Demo-injected requests go only to simulated volunteers, keeping the presenter's
+        // real phone free for the live HELP from the phone simulator.
+        ...(r.channel === "demo" ? vols.filter((v) => !v.is_simulated).map((v) => v.id) : []),
+      ]),
     }));
     const plan = planOffers(greedy, candidates);
     const created: OfferCreated[] = [];

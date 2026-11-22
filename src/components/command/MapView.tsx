@@ -380,7 +380,7 @@ export default function MapView({ view, layers, selectedRequestId, onSelectReque
       }
       const pct = Math.min(100, Math.round((s.occupancy / Math.max(1, s.capacity)) * 100));
       const color = pct > 90 ? "#ef4444" : pct > 70 ? "#f59e0b" : "#22c55e";
-      m.getElement().innerHTML = `⛺ ${s.name.split(" ").slice(0, 2).join(" ")}<div class="bar"><div style="width:${pct}%;background:${color}"></div></div><div style="font-weight:600;color:#94a3b8">${s.occupancy}/${s.capacity}</div>`;
+      m.getElement().innerHTML = `⛺ ${s.occupancy}<span style="color:#64748b">/${s.capacity}</span><div class="bar"><div style="width:${pct}%;background:${color}"></div></div>`;
       m.getElement().title = `${s.name} — ${s.occupancy}/${s.capacity} · ${s.phone}`;
     }
     for (const [id, m] of shelterMarkers.current) if (!sSeen.has(id)) (m.remove(), shelterMarkers.current.delete(id));

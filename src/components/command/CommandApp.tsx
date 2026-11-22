@@ -105,7 +105,7 @@ export default function CommandApp({ operatorName, demo }: { operatorName: strin
     setSelected(id);
     setTab("queue");
     const r = view.requests.find((x) => x.id === id);
-    if (r) setFlyTo({ center: r.lngLat, zoom: 15, key: Date.now() });
+    if (r) setFlyTo({ center: r.lngLat, zoom: 14.6, key: Date.now() });
   };
 
   const act = async (fn: () => Promise<unknown>, ok: string) => {
@@ -564,7 +564,7 @@ function RequestDetail({ r, view, now, onClose, act, routeFrom }: { r: RequestSt
       {isOpen && (
         <div className="mt-3 space-y-2">
           <div className="flex gap-2">
-            <select value={assignTo} onChange={(e) => setAssignTo(e.target.value)} className="flex-1 rounded-lg border border-slate-700 bg-slate-950 px-2 py-2 text-sm">
+            <select value={assignTo} onChange={(e) => setAssignTo(e.target.value)} className="min-w-0 flex-1 rounded-lg border border-slate-700 bg-slate-950 px-2 py-2 text-sm">
               <option value="">Assign a volunteer…</option>
               {free.map((v) => (
                 <option key={v.id} value={v.id}>

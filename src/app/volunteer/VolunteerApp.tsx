@@ -124,7 +124,7 @@ export default function VolunteerApp({ demo, demoPhone }: { demo: boolean; demoP
             {ICON[v.type]} {v.name}
           </div>
           <div className="text-xs text-slate-400">
-            {v.type.replace("_", " ")} · carries {v.capacity}
+            {v.type.replaceAll("_", " ")} · carries {v.capacity}
           </div>
         </div>
         <button className="text-xs text-slate-500" onClick={() => fetch("/api/auth/logout?who=volunteer", { method: "POST" }).then(() => setAuthed(false))}>
@@ -207,7 +207,7 @@ function ActiveJob({ job, shelters, simMove, demo, busy, run }: { job: JobView; 
       <div className="mt-1 text-xl">
         {r.name ?? "Unregistered caller"} · 👥 {r.people}
       </div>
-      {r.vulnerable.length > 0 && <div className="text-pink-200">💗 {r.vulnerable.map((x) => `${x.count > 1 ? x.count + " " : ""}${x.type.replace("_", " ")}`).join(", ")}</div>}
+      {r.vulnerable.length > 0 && <div className="text-pink-200">💗 {r.vulnerable.map((x) => `${x.count > 1 ? x.count + " " : ""}${x.type.replaceAll("_", " ")}`).join(", ")}</div>}
       {r.message && <div className="mt-1 italic text-slate-300">“{r.message}”</div>}
       <div className="mt-1 text-slate-300">
         📍 {r.landmark ?? r.zone ?? "?"} — <span className="text-amber-300">{SRC[r.locationSource] ?? r.locationSource}</span> · {dist(job.distanceM)}
