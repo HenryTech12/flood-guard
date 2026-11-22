@@ -187,3 +187,28 @@ test("landing-page sign-up → confirm email → alert email → unsubscribe", a
   expect((await messages(api, "alert")).filter((m) => m.to === email).length).toBe(before);
   await ctx.close();
 });
+
+test("sign-up form auto-detects the area from the device location", async ({ browser }) => {
+  // A phone standing in Gadumo / Kpata, Lokoja.
+  const inLokoja = await browser.newContext({ geolocation: { latitude: 7.8045, longitude: 6.7585 }, permissions: ["geolocation"] });
+  const p1 = await inLokoja.newPage();
+  await p1.goto("/");
+  await expect(p1.getByTestId("locate-status")).toContainText("Detected from your location");
+  await expect(p1.getByTestId("signup").getByLabel("Area", { exact: true })).toHaveValue("gadumo");
+  await inLokoja.close();
+
+  // A phone in Lagos: outside the covered region → asks the user to choose.
+  const inLagos = await browser.newContext({ geolocation: { latitude: 6.5158, longitude: 3.3898 }, permissions: ["geolocation"] });
+  const p2 = await inLagos.newPage();
+  await p2.goto("/");
+  await expect(p2.getByTestId("locate-status")).toContainText("outside Lokoja");
+  await expect(p2.getByTestId("signup").getByLabel("Area", { exact: true })).toHaveValue("");
+  await inLagos.close();
+
+  // Permission refused → manual choice, no error.
+  const denied = await browser.newContext({ permissions: [] });
+  const p3 = await denied.newPage();
+  await p3.goto("/");
+  await expect(p3.getByTestId("locate-status")).toContainText(/blocked|try again/);
+  await denied.close();
+});

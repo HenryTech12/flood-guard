@@ -10,6 +10,11 @@ const LANGS = [
   ["ig", "Igbo"],
 ] as const;
 
+type Locate =
+  | { state: "idle" | "detecting" | "denied" | "unavailable" }
+  | { state: "found"; zoneName: string }
+  | { state: "outside"; region: string; km: number };
+
 export default function SignupCard() {
   const [zones, setZones] = useState<Zone[]>([]);
   const [f, setF] = useState({ name: "", email: "", phone: "", zoneId: "", lang: "en", consent: false });
@@ -24,6 +29,34 @@ export default function SignupCard() {
       .catch(() => {});
   }, []);
   const set = (k: keyof typeof f, v: string | boolean) => setF((x) => ({ ...x, [k]: v }));
+  const [loc, setLoc] = useState<Locate>({ state: "idle" });
+
+  // Auto-detect the area from the device location. The browser asks permission the first
+  // time; only the resulting area is used — coordinates are not stored.
+  const detect = () => {
+    if (!("geolocation" in navigator)) return setLoc({ state: "unavailable" });
+    setLoc({ state: "detecting" });
+    navigator.geolocation.getCurrentPosition(
+      async (p) => {
+        try {
+          const r = await fetch(`/api/public/locate?lat=${p.coords.latitude}&lng=${p.coords.longitude}`);
+          const d = await r.json();
+          if (d.zoneId) {
+            setF((x) => (x.zoneId ? x : { ...x, zoneId: d.zoneId }));
+            setLoc({ state: "found", zoneName: d.zoneName });
+          } else setLoc({ state: "outside", region: d.region, km: d.distanceToRegionKm });
+        } catch {
+          setLoc({ state: "unavailable" });
+        }
+      },
+      (e) => setLoc({ state: e.code === e.PERMISSION_DENIED ? "denied" : "unavailable" }),
+      { enableHighAccuracy: false, timeout: 15000, maximumAge: 10 * 60 * 1000 },
+    );
+  };
+  useEffect(() => {
+    detect();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   if (done)
     return (
@@ -82,14 +115,35 @@ export default function SignupCard() {
         <input required aria-label="Name" placeholder="Your name" value={f.name} onChange={(e) => set("name", e.target.value)} className="rounded-lg border border-slate-700 bg-slate-950 px-3 py-2.5" />
         <input required aria-label="Email" type="email" autoComplete="email" placeholder="Email address" value={f.email} onChange={(e) => set("email", e.target.value)} className="rounded-lg border border-slate-700 bg-slate-950 px-3 py-2.5" />
         <input required aria-label="Phone" type="tel" autoComplete="tel" placeholder="Phone (e.g. 0803 123 4567)" value={f.phone} onChange={(e) => set("phone", e.target.value)} className="rounded-lg border border-slate-700 bg-slate-950 px-3 py-2.5" />
-        <select required aria-label="Area" value={f.zoneId} onChange={(e) => set("zoneId", e.target.value)} className="rounded-lg border border-slate-700 bg-slate-950 px-3 py-2.5">
-          <option value="">Your area…</option>
-          {zones.map((z) => (
-            <option key={z.id} value={z.id}>
-              {z.name}
-            </option>
-          ))}
-        </select>
+        <div>
+          <select required aria-label="Area" value={f.zoneId} onChange={(e) => set("zoneId", e.target.value)} className="w-full rounded-lg border border-slate-700 bg-slate-950 px-3 py-2.5">
+            <option value="">{loc.state === "detecting" ? "Detecting your area…" : "Your area…"}</option>
+            {zones.map((z) => (
+              <option key={z.id} value={z.id}>
+                {z.name}
+              </option>
+            ))}
+          </select>
+          <div className="mt-1 text-xs" data-testid="locate-status">
+            {loc.state === "detecting" && <span className="text-slate-400">📍 Finding your area…</span>}
+            {loc.state === "found" && <span className="text-green-300">📍 Detected from your location — change it if wrong</span>}
+            {loc.state === "outside" && (
+              <span className="text-amber-300">
+                📍 You seem to be outside {loc.region} (~{loc.km} km away). FloodGuard currently covers {loc.region} — choose the area you want alerts for.
+              </span>
+            )}
+            {loc.state === "denied" && (
+              <span className="text-slate-400">
+                Location is blocked — choose your area, or allow location for this site in your browser settings.
+              </span>
+            )}
+            {loc.state === "unavailable" && (
+              <button type="button" onClick={detect} className="text-sky-400 underline">
+                📍 Couldn&apos;t get your location — try again
+              </button>
+            )}
+          </div>
+        </div>
         <select aria-label="Language" value={f.lang} onChange={(e) => set("lang", e.target.value)} className="rounded-lg border border-slate-700 bg-slate-950 px-3 py-2.5 sm:col-span-2">
           {LANGS.map(([v, l]) => (
             <option key={v} value={v}>
