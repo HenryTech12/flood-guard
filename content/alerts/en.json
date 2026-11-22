@@ -1,0 +1,79 @@
+{
+  "_meta": {
+    "lang": "en",
+    "status": "FINAL",
+    "notes": "Source language. Keep SMS under ~160 characters where possible. Placeholders in {braces}."
+  },
+  "alert": {
+    "medium": "FloodGuard {zone}: FLOOD WATCH. Heavy rain. Move valuables up, charge your phone, know your shelter: {shelter}. Need help? SMS HELP to {shortcode} or dial {ussd}",
+    "high": "FloodGuard {zone}: FLOOD WARNING. Water may enter homes soon. Move children, elderly & sick to higher ground now. Shelter: {shelter}. Trapped? SMS HELP to {shortcode}",
+    "severe": "FloodGuard {zone}: SEVERE FLOOD. Leave low areas NOW. Go to {shelter}. Do not walk or drive in moving water. Trapped? SMS HELP to {shortcode} or dial {ussd}"
+  },
+  "voice": {
+    "medium": "This is FloodGuard with a flood watch for {zone}. Heavy rain is falling. Move your valuables to a high place, charge your phone, and know the way to {shelter}. If you need help, send HELP by SMS to {shortcode}.",
+    "high": "This is FloodGuard with a flood warning for {zone}. Water may enter homes soon. Move children, elderly and sick people to higher ground now. The nearest shelter is {shelter}. If you are trapped, send HELP by SMS to {shortcode}, or dial {ussd}.",
+    "severe": "This is FloodGuard. Severe flood emergency for {zone}. Leave low areas now and go to {shelter}. Do not walk or drive through moving water. If you are trapped, send HELP by SMS to {shortcode}, or dial {ussd}. Tell us how many people are with you."
+  },
+  "radio": {
+    "level_word": {
+      "medium": "FLOOD WATCH",
+      "high": "FLOOD WARNING",
+      "severe": "SEVERE FLOOD EMERGENCY"
+    },
+    "level_body": {
+      "medium": "Heavy rain is expected to cause flooding in low areas. Please move valuables, documents and food to a high place. Charge your phone. Agree with your family where you will meet.",
+      "high": "Water may enter homes in low-lying areas within hours. Move children, elderly, pregnant women, disabled and sick people to higher ground NOW. Do not wait until the water reaches your door.",
+      "severe": "Flooding is happening now. Leave low-lying areas immediately and go to the nearest shelter. Do not walk, swim or drive through moving water — even knee-deep water can sweep you away. Switch off electricity at the main switch if it is safe to do so."
+    },
+    "script": "FLOODGUARD COMMUNITY ANNOUNCEMENT\n{level_word} — {zone}\nIssued {time}\n\n{level_body}\n\nWhy we are warning you: {reasons}.\n\nAreas most at risk: around {landmarks}.\n\nShelters with space: {shelters}.\n\nIf you are trapped or need rescue, send an SMS with the word HELP to {shortcode}, or dial {ussd} on any phone — it is free. Say how many people are with you. If you are safe, send SAFE so your family knows.\n\nPlease share this message with your neighbours, especially the elderly, people with disabilities and families with small children.\n\n[Read slowly, twice. Approved by: __________ ]"
+  },
+  "sms": {
+    "help_ack": "FloodGuard: Help request {ref} received ({people} people). Stay on the highest safe point. Rescuers are being sent. Reply anytime with more details.",
+    "help_ack_unlocated": "FloodGuard: Help request {ref} received. We need your location: reply with your area and nearest landmark (e.g. Kpata Market).",
+    "help_merged": "FloodGuard: Request {ref} updated ({people} people). Rescuers have the new details.",
+    "location_updated": "FloodGuard: Thank you. Location for {ref} set near {place}.",
+    "rescuer_assigned": "FloodGuard: A rescuer ({vtype}) accepted {ref} and is on the way. Stay where you are if it is safe.",
+    "rescued_resident": "FloodGuard: You are marked RESCUED ({ref}). Nearest shelter with space: {shelter}.",
+    "family_safe_rescued": "FloodGuard: {name} has been rescued and is safe. Ref {ref}.",
+    "family_safe_checkin": "FloodGuard: {name} checked in SAFE at {time}.",
+    "safe_ack": "FloodGuard: You are marked SAFE. We told your family contacts. If anything changes, SMS HELP to {shortcode}.",
+    "safe_ack_closed": "FloodGuard: You are marked SAFE and request {ref} is closed. If you still need help, SMS HELP.",
+    "report_ack": "FloodGuard: Thank you. Report received{place}. It helps rescuers and the flood map.",
+    "shelter_info": "FloodGuard: Nearest shelter: {name}, {distance} away, space for {space}. Tel {phone}.",
+    "shelter_none": "FloodGuard: No shelter with space found near you. If you are in danger, SMS HELP to {shortcode}.",
+    "unknown": "FloodGuard: SMS HELP (e.g. HELP 3 people roof) for rescue, SAFE if you are safe, WATER knee to report flooding, SHELTER for nearest shelter.",
+    "stop_ack": "FloodGuard: Flood alerts stopped. SMS START to rejoin. You can still SMS HELP anytime.",
+    "start_ack": "FloodGuard: Flood alerts are ON for your number.",
+    "lang_ack": "FloodGuard: Language set to {language}.",
+    "delete_ack": "FloodGuard: Your registration and household data were deleted. You can still SMS HELP anytime.",
+    "register_ack": "FloodGuard: {name} registered in {zone}. Alerts in {language}. SMS STOP to stop alerts, DELETE to erase your data.",
+    "job_offer": "FloodGuard job {ref}: {people} people, {distance} away, urgency {urgency}. Open the volunteer app to accept within 2 min.",
+    "job_cancelled": "FloodGuard: Job {ref} was reassigned or closed. Thank you.",
+    "otp": "FloodGuard volunteer login code: {code}. Valid 5 minutes. Do not share it."
+  },
+  "ussd": {
+    "main": "CON FloodGuard {region}\n1. I need help\n2. I am safe\n3. Report flooding\n4. Nearest shelter\n5. Register household",
+    "ask_people": "CON How many people are with you? Enter a number:",
+    "ask_vulnerable": "CON Anyone elderly, disabled, pregnant, a child under 5 or sick?\n1. Yes\n2. No",
+    "ask_vulnerable_type": "CON Who needs extra care?\n1. Elderly\n2. Disabled\n3. Pregnant\n4. Child under 5\n5. Sick/bedridden",
+    "ask_where": "CON Where are you now?\n1. At my registered home\n2. Choose a landmark",
+    "ask_area": "CON Choose your area:\n{list}",
+    "ask_landmark": "CON Nearest landmark:\n{list}\n0. Not sure",
+    "confirm_help": "CON Send help for {people} people near {place}?\n1. Confirm\n2. Cancel",
+    "help_done": "END Help request {ref} received. Stay on high ground. Rescuers are being sent. We will SMS you.",
+    "safe_done": "END Thank you. You are marked SAFE. Your family contacts will be told.",
+    "ask_report_type": "CON What did you see?\n1. Water in homes/streets\n2. Road blocked\n3. Drain blocked",
+    "ask_depth": "CON How deep is the water?\n1. Ankle\n2. Knee\n3. Waist\n4. Chest or higher",
+    "report_done": "END Thank you. Your report helps rescuers.",
+    "shelter": "END Nearest shelter: {name} ({distance}). Space for {space}. Tel {phone}",
+    "shelter_none": "END No shelter with space found. If you are in danger SMS HELP to {shortcode}.",
+    "reg_name": "CON Register household.\nEnter your name:",
+    "reg_lang": "CON Preferred language:\n1. English\n2. Pidgin\n3. Hausa\n4. Yoruba\n5. Igbo",
+    "reg_vulnerable": "CON Anyone at home needing extra care?\n1. Elderly\n2. Disabled\n3. Pregnant\n4. Child under 5\n5. Sick/bedridden\n0. None",
+    "reg_family": "CON Family phone to tell when you are safe (0 to skip):",
+    "reg_consent": "CON FloodGuard stores your phone, area & household needs ONLY to warn and rescue you. SMS DELETE anytime to erase.\n1. I agree\n2. Cancel",
+    "reg_done": "END Registered. You will get flood alerts for {zone}.",
+    "cancelled": "END Cancelled. Dial {ussd} anytime.",
+    "invalid": "END Invalid choice. Please dial {ussd} again."
+  }
+}
