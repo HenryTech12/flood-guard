@@ -30,6 +30,8 @@ services:
       DEMO_KEY: floodguard-demo
       AUTH_SECRET: docker-local-secret-change-me-0123456789
       MESSAGING_PROVIDER: mock
+      EMAIL_PROVIDER: mock
+      OPS_NOTIFY_EMAILS: sema-ops@example.com
       PUBLIC_BASE_URL: http://localhost:3000
       RUN_SETUP: "true"
     ports:

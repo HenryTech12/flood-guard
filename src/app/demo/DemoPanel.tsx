@@ -9,6 +9,7 @@ interface Msg {
   id: number;
   channel: string;
   to: string;
+  subject: string | null;
   body: string;
   language: string | null;
   purpose: string;
@@ -30,7 +31,7 @@ const STEPS = [
 
 export default function DemoPanel() {
   const { data: live, refetch } = useLiveJson<LiveState>("/api/state", { pollMs: 3000 });
-  const { data: log, refetch: refetchLog } = useLiveJson<{ provider: string; counts: { total: number; queued: number; failed: number }; messages: Msg[] }>("/api/messages?limit=60", { pollMs: 2500 });
+  const { data: log, refetch: refetchLog } = useLiveJson<{ provider: string; emailProvider: string; counts: { total: number; queued: number; failed: number }; messages: Msg[] }>("/api/messages?limit=60", { pollMs: 2500 });
   useHeartbeat(1000);
   const [zone, setZone] = useState("gadumo");
   const [level, setLevel] = useState("high");
@@ -63,7 +64,7 @@ export default function DemoPanel() {
     <main className="mx-auto max-w-7xl px-4 py-6">
       <div className="flex flex-wrap items-center gap-3">
         <h1 className="text-3xl font-black">Demo control panel</h1>
-        <span className="rounded-full border border-amber-700 px-3 py-1 text-sm text-amber-300">messaging: {log?.provider ?? "…"}</span>
+        <span className="rounded-full border border-amber-700 px-3 py-1 text-sm text-amber-300">messaging: {log?.provider ?? "…"} · email: {log?.emailProvider ?? "…"}</span>
         <div className="ml-auto flex gap-2">
           <Link href="/command" target="_blank" className="rounded-lg bg-sky-700 px-4 py-2 font-bold hover:bg-sky-600">
             Command map ↗
@@ -199,15 +200,15 @@ export default function DemoPanel() {
               </thead>
               <tbody>
                 {log?.messages
-                  .filter((m) => !filter || `${m.to} ${m.purpose} ${m.body}`.toLowerCase().includes(filter.toLowerCase()))
+                  .filter((m) => !filter || `${m.to} ${m.purpose} ${m.subject ?? ""} ${m.body}`.toLowerCase().includes(filter.toLowerCase()))
                   .map((m) => (
                     <tr key={m.id} className="border-t border-slate-800 align-top">
                       <td className="whitespace-nowrap py-1 pr-2 text-xs text-slate-500">{new Date(m.created_at).toLocaleTimeString()}</td>
-                      <td>{m.channel === "voice" ? "📞" : "✉"}</td>
+                      <td title={m.channel}>{m.channel === "voice" ? "📞" : m.channel === "email" ? "📧" : "✉"}</td>
                       <td className="whitespace-nowrap pr-2 font-mono text-xs">{m.to}</td>
                       <td className="text-xs uppercase">{m.language ?? ""}</td>
                       <td className="pr-2 text-xs text-sky-300">{m.purpose}</td>
-                      <td className="pr-2 text-xs text-slate-300">{m.body}</td>
+                      <td className="pr-2 text-xs text-slate-300">{m.subject ? <b className="block text-slate-100">{m.subject}</b> : null}{m.channel === "email" ? m.body.split("\n").slice(2, 4).join(" ") : m.body}</td>
                       <td className={`text-xs ${m.status === "failed" ? "text-red-400" : m.status === "queued" ? "text-amber-300" : "text-green-400"}`} title={m.last_error ?? ""}>
                         {m.status}
                         {m.attempts > 1 ? ` (${m.attempts})` : ""}

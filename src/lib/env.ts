@@ -60,6 +60,26 @@ export const env = {
   get alertCooldownMin() {
     return num(process.env.ALERT_COOLDOWN_MINUTES, 360);
   },
+  get emailProvider(): "mock" | "brevo" {
+    return process.env.EMAIL_PROVIDER === "brevo" ? "brevo" : "mock";
+  },
+  get brevo() {
+    return {
+      apiKey: process.env.BREVO_API_KEY || "",
+      fromEmail: process.env.EMAIL_FROM || "",
+      fromName: process.env.EMAIL_FROM_NAME || "FloodGuard",
+    };
+  },
+  /** SEMA staff who get operational emails (comma-separated). Empty = no ops emails. */
+  get opsNotifyEmails(): string[] {
+    return (process.env.OPS_NOTIFY_EMAILS || "")
+      .split(",")
+      .map((s) => s.trim())
+      .filter(Boolean);
+  },
+  get opsNotifyMinUrgency() {
+    return num(process.env.OPS_NOTIFY_MIN_URGENCY, 70);
+  },
   get supabaseUrl() {
     return process.env.NEXT_PUBLIC_SUPABASE_URL || "";
   },

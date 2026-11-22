@@ -87,7 +87,7 @@ export interface ResidentRef {
   home: LngLat | null;
   optOut: boolean;
   vulnerable: { type: VulnerableType; count: number }[];
-  family: { phone: string; name: string | null }[];
+  family: { phone: string; name: string | null; email: string | null }[];
 }
 
 export async function getResidentByPhone(db: Db, phone: string): Promise<ResidentRef | null> {
@@ -109,7 +109,7 @@ async function hydrateResident(
   r: { id: string; phone: string; name: string | null; preferred_language: Lang; zone_id: string | null; lng: number | null; lat: number | null; alerts_opt_out: boolean },
 ): Promise<ResidentRef> {
   const vulnerable = await db<{ type: VulnerableType; count: number }[]>`select type, count from vulnerable_members where resident_id = ${r.id}`;
-  const family = await db<{ phone: string; name: string | null }[]>`select phone, name from family_contacts where resident_id = ${r.id}`;
+  const family = await db<{ phone: string; name: string | null; email: string | null }[]>`select phone, name, email from family_contacts where resident_id = ${r.id}`;
   return {
     id: r.id,
     phone: r.phone,

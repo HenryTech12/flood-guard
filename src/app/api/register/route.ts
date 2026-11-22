@@ -12,9 +12,11 @@ import { LANG_NAMES } from "@/lib/core/types";
 export const dynamic = "force-dynamic";
 
 const Phone = z.string().refine(isValidPhone, "invalid phone").transform(normalizePhone);
+const Email = z.union([z.literal(""), z.string().trim().toLowerCase().pipe(z.email("invalid email"))]).nullish().transform((e) => e || null);
 const Body = z.object({
   phone: Phone,
   name: z.string().min(2).max(80),
+  email: Email,
   lang: z.enum(LANGS),
   zoneId: z.string().min(1),
   landmarkId: z.string().nullish(),
@@ -23,7 +25,7 @@ const Body = z.object({
   consent: z.literal(true, { message: "Consent is required" }),
   registeredBy: z.string().max(80).nullish(),
   vulnerable: z.array(z.object({ type: z.enum(VULNERABLE_TYPES), count: z.number().int().min(1).max(20), notes: z.string().max(200).nullish() })).max(10),
-  family: z.array(z.object({ phone: Phone, name: z.string().max(80).nullish() })).max(3),
+  family: z.array(z.object({ phone: Phone, name: z.string().max(80).nullish(), email: Email })).max(3),
 });
 
 export const POST = handle(async (req: Request) => {
@@ -40,6 +42,7 @@ export const POST = handle(async (req: Request) => {
   const r = await registerResident(sql, {
     phone: b.phone,
     name: b.name,
+    email: b.email,
     lang: b.lang,
     zoneId: b.zoneId,
     home,

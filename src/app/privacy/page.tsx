@@ -11,7 +11,7 @@ const SECTIONS: [string, React.ReactNode][] = [
     "What we collect — and only this",
     <ul key="collect" className="list-disc space-y-1 pl-5">
       <li>
-        <b>If you register:</b> your phone number, name, preferred language, area, and — only if you agree — your home location; the type and number of people in your household who need extra help; family phone numbers to tell when you are safe.
+        <b>If you register:</b> your phone number, name, optional email address, preferred language, area, and — only if you agree — your home location; the type and number of people in your household who need extra help; family phone numbers (and optional emails) to tell when you are safe. Emails are sent through our email provider (Brevo) only for these warnings and safety messages.
       </li>
       <li>
         <b>If you ask for help:</b> your phone number, your message, how many people are with you, and the location you give (home, a landmark, or your area).

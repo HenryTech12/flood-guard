@@ -21,6 +21,8 @@ jobs:
       DEMO_KEY: floodguard-demo
       AUTH_SECRET: ci-secret-0123456789abcdef
       MESSAGING_PROVIDER: mock
+      EMAIL_PROVIDER: mock
+      OPS_NOTIFY_EMAILS: sema-ops@example.com
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4

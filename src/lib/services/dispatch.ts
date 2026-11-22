@@ -7,7 +7,9 @@ import { formatDistance } from "../core/geo";
 import type { Lang, LngLat, VolunteerType } from "../core/types";
 import { env } from "../env";
 import { tx as tr } from "../i18n/templates";
+import { isEmail } from "../messaging/email";
 import { enqueue, sendNow } from "../messaging/outbox";
+import { safeEmail } from "./notify";
 import { publishChange } from "../realtime/server";
 import { audit } from "./audit";
 import { nearestShelters } from "./reference";
@@ -233,9 +235,15 @@ async function notifyRescued(sql: Sql, r: NonNullable<Awaited<ReturnType<typeof 
     { channel: "sms", to: r.phone, body: tr(r.lang, "sms.rescued_resident", { ref: r.ref_code, shelter: shelterText }), language: r.lang, purpose: "rescued_resident", refType: "help_request", refId: r.id },
   ];
   if (r.resident_id) {
-    const fam = await sql<{ phone: string }[]>`select phone from family_contacts where resident_id = ${r.resident_id}`;
+    const fam = await sql<{ phone: string; email: string | null }[]>`select phone, email from family_contacts where resident_id = ${r.resident_id}`;
     const name = r.name ?? "Your family member";
-    for (const f of fam) msgs.push({ channel: "sms", to: f.phone, body: tr(r.lang, "sms.family_safe_rescued", { name, ref: r.ref_code }), language: r.lang, purpose: "family_safe", refType: "help_request", refId: r.id });
+    for (const f of fam) {
+      msgs.push({ channel: "sms", to: f.phone, body: tr(r.lang, "sms.family_safe_rescued", { name, ref: r.ref_code }), language: r.lang, purpose: "family_safe", refType: "help_request", refId: r.id });
+      if (isEmail(f.email)) {
+        const e = safeEmail(r.lang ?? "en", "rescued", { name, ref: r.ref_code });
+        msgs.push({ channel: "email", to: f.email, subject: e.subject, body: e.text, html: e.html, language: r.lang, purpose: "family_safe", refType: "help_request", refId: r.id });
+      }
+    }
   }
   await sendNow(sql, msgs);
 }

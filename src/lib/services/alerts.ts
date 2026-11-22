@@ -10,6 +10,8 @@ import { t, tx as tr } from "../i18n/templates";
 import { enqueue, processOutbox, type OutboundMessage } from "../messaging/outbox";
 import { publishChange } from "../realtime/server";
 import { audit } from "./audit";
+import { isEmail } from "../messaging/email";
+import { alertEmail } from "./notify";
 import { nearestShelters } from "./reference";
 
 export interface AlertSummary {
@@ -17,8 +19,9 @@ export interface AlertSummary {
   level: RiskLevel;
   sms: number;
   voice: number;
+  email: number;
   skipped: number;
-  byLanguage: Record<string, { sms: number; voice: number; fallback: boolean }>;
+  byLanguage: Record<string, { sms: number; voice: number; email: number; fallback: boolean }>;
   skippedReasons: Record<string, number>;
 }
 
@@ -36,13 +39,13 @@ export function voiceAudioUrl(lang: Lang, level: RiskLevel) {
 export async function sendZoneAlerts(
   sql: Sql,
   zoneId: string,
-  { level, force = false, actor = "system", channels = ["sms", "voice"] as ("sms" | "voice")[] }: { level?: RiskLevel; force?: boolean; actor?: string; channels?: ("sms" | "voice")[] } = {},
+  { level, force = false, actor = "system", channels = ["sms", "voice", "email"] as ("sms" | "voice" | "email")[] }: { level?: RiskLevel; force?: boolean; actor?: string; channels?: ("sms" | "voice" | "email")[] } = {},
 ): Promise<AlertSummary> {
   const region = getRegion();
   const z = await zoneInfo(sql, zoneId);
   if (!z) throw new Error(`Unknown zone ${zoneId}`);
   const lvl = level ?? z.current_risk_level;
-  const summary: AlertSummary = { zoneId, level: lvl, sms: 0, voice: 0, skipped: 0, byLanguage: {}, skippedReasons: {} };
+  const summary: AlertSummary = { zoneId, level: lvl, sms: 0, voice: 0, email: 0, skipped: 0, byLanguage: {}, skippedReasons: {} };
   if (levelIndex(lvl) < levelIndex("medium")) {
     summary.skippedReasons["zone below MEDIUM"] = 1;
     return summary;
@@ -50,8 +53,8 @@ export async function sendZoneAlerts(
   const [shelter] = await nearestShelters(sql, [z.lng, z.lat], { needSpace: 10, limit: 1 });
   const vars = { zone: z.short_name, shelter: shelter?.name ?? "the nearest high ground", shortcode: region.smsShortcode, ussd: region.ussdCode };
 
-  const residents = await sql<{ id: string; phone: string; preferred_language: Lang; alerts_opt_out: boolean }[]>`
-    select id, phone, preferred_language, alerts_opt_out from residents where zone_id = ${zoneId}`;
+  const residents = await sql<{ id: string; phone: string; email: string | null; preferred_language: Lang; alerts_opt_out: boolean }[]>`
+    select id, phone, email, preferred_language, alerts_opt_out from residents where zone_id = ${zoneId}`;
   const last = await sql<{ resident_id: string; channel: string; level: RiskLevel; sent_at: Date }[]>`
     select resident_id, channel, level, sent_at from alert_deliveries where resident_id = any(${residents.map((r) => r.id)}::uuid[])`;
   const lastBy = new Map(last.map((l) => [`${l.resident_id}:${l.channel}`, l]));
@@ -67,6 +70,7 @@ export async function sendZoneAlerts(
     }
     for (const ch of channels) {
       if (ch === "voice" && levelIndex(lvl) < levelIndex("high")) continue; // voice only for HIGH+
+      if (ch === "email" && !isEmail(r.email)) continue; // email only if the resident gave one
       const prev = lastBy.get(`${r.id}:${ch}`);
       const decision = shouldSendAlert(lvl, prev ? { level: prev.level, sentAt: prev.sent_at } : null, now, { force, cooldownMin: env.alertCooldownMin });
       if (!decision.send) {
@@ -78,9 +82,14 @@ export async function sendZoneAlerts(
       const lang = r.preferred_language;
       const key = ch === "sms" ? `alert.${lvl}` : `voice.${lvl}`;
       const rendered = t(lang, key, vars);
-      const bucket = (summary.byLanguage[lang] ??= { sms: 0, voice: 0, fallback: false });
+      const bucket = (summary.byLanguage[lang] ??= { sms: 0, voice: 0, email: 0, fallback: false });
       bucket.fallback ||= rendered.fallback;
-      if (ch === "sms") {
+      if (ch === "email") {
+        bucket.email++;
+        summary.email++;
+        const e = alertEmail(lang, lvl, { zone: z.short_name, shelter: vars.shelter });
+        msgs.push({ channel: "email", to: r.email!, subject: e.subject, body: e.text, html: e.html, language: rendered.lang, purpose: "alert", refType: "zone", refId: zoneId });
+      } else if (ch === "sms") {
         bucket.sms++;
         summary.sms++;
         msgs.push({ channel: "sms", to: r.phone, body: rendered.text, language: rendered.lang, purpose: "alert", refType: "zone", refId: zoneId });
@@ -102,7 +111,7 @@ export async function sendZoneAlerts(
       on conflict (resident_id, channel) do update set zone_id = excluded.zone_id, level = excluded.level, sent_at = excluded.sent_at`;
   }
   for (const [lang, b] of Object.entries(summary.byLanguage)) {
-    for (const ch of ["sms", "voice"] as const) {
+    for (const ch of ["sms", "voice", "email"] as const) {
       if (!b[ch]) continue;
       const r = t(lang as Lang, ch === "sms" ? `alert.${lvl}` : `voice.${lvl}`, vars);
       await sql`insert into alerts (zone_id, level, language, channel, message, sent_count, fallback_from, created_by)
@@ -112,7 +121,7 @@ export async function sendZoneAlerts(
   // Always (re)generate the radio script for the operator.
   const script = await buildRadioScript(sql, zoneId, "en", lvl);
   await sql`insert into alerts (zone_id, level, language, channel, message, sent_count, created_by) values (${zoneId}, ${lvl}, 'en', 'radio_script', ${script}, 0, ${actor})`;
-  await audit(sql, actor, "zone", zoneId, "alerts_sent", null, lvl, { sms: summary.sms, voice: summary.voice, skipped: summary.skipped, force });
+  await audit(sql, actor, "zone", zoneId, "alerts_sent", null, lvl, { sms: summary.sms, voice: summary.voice, email: summary.email, skipped: summary.skipped, force });
   // Send the first batch straight away; the tick drains the rest with retries.
   await processOutbox(sql, { limit: 150 });
   await publishChange("alerts");

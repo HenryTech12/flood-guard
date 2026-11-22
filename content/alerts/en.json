@@ -75,5 +75,21 @@
     "reg_done": "END Registered. You will get flood alerts for {zone}.",
     "cancelled": "END Cancelled. Dial {ussd} anytime.",
     "invalid": "END Invalid choice. Please dial {ussd} again."
+  },
+  "email": {
+    "alert_subject": {
+      "medium": "Flood watch for {zone}",
+      "high": "FLOOD WARNING for {zone}",
+      "severe": "SEVERE FLOOD — leave low areas in {zone} now"
+    },
+    "alert_title": {
+      "medium": "Flood watch: {zone}",
+      "high": "Flood warning: {zone}",
+      "severe": "Severe flood emergency: {zone}"
+    },
+    "safe_subject": "{name} is safe",
+    "safe_rescued": "{name} has been rescued by a FloodGuard volunteer and is safe (reference {ref}).",
+    "safe_checkin": "{name} checked in as SAFE with FloodGuard at {time}.",
+    "footer": "You receive this because you registered with FloodGuard. SMS STOP to {shortcode} to stop alerts, or DELETE to erase your data."
   }
 }

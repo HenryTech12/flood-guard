@@ -75,5 +75,21 @@
     "reg_done": "END You don register. Flood alert go come for {zone}.",
     "cancelled": "END E don cancel. Dial {ussd} anytime.",
     "invalid": "END Wrong choice. Abeg dial {ussd} again."
+  },
+  "email": {
+    "alert_subject": {
+      "medium": "Flood fit come for {zone}",
+      "high": "FLOOD WARNING for {zone}",
+      "severe": "BIG FLOOD — comot from low area for {zone} now"
+    },
+    "alert_title": {
+      "medium": "Flood fit come: {zone}",
+      "high": "Flood warning: {zone}",
+      "severe": "Big flood emergency: {zone}"
+    },
+    "safe_subject": "{name} dey safe",
+    "safe_rescued": "FloodGuard volunteer don rescue {name}, e dey safe now (reference {ref}).",
+    "safe_checkin": "{name} talk say e dey SAFE for FloodGuard by {time}.",
+    "footer": "You dey get this message because you register with FloodGuard. SMS STOP to {shortcode} to stop alert, or DELETE to clear your data."
   }
 }

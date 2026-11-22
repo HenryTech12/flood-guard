@@ -6,6 +6,7 @@ import { type RiskLevel, levelIndex } from "../core/types";
 import { publishChange } from "../realtime/server";
 import { sendZoneAlerts } from "./alerts";
 import { audit } from "./audit";
+import { notifyOpsZoneEscalation } from "./notify";
 
 /** A satellite extent counts as "current" for this many days after it was observed. */
 export const EXTENT_VALID_DAYS = 14;
@@ -71,6 +72,15 @@ export async function recomputeAllZones(sql: Sql, { simTime, autoAlerts = false,
     const { recomputeUrgency } = await import("./helpRequests");
     await recomputeUrgency(sql);
     await publishChange("zones");
+    for (const c of changes) {
+      if (levelIndex(c.to) > levelIndex(c.from) && levelIndex(c.to) >= levelIndex("high")) {
+        const [z] = await sql<{ name: string; residents: number; vulnerable: number }[]>`
+          select z.name, (select count(*) from residents r where r.zone_id = z.id)::int residents,
+                 (select count(distinct r.id) from residents r join vulnerable_members v on v.resident_id = r.id where r.zone_id = z.id)::int vulnerable
+          from zones z where z.id = ${c.zoneId}`;
+        if (z) await notifyOpsZoneEscalation(sql, { zoneId: c.zoneId, zoneName: z.name, from: c.from, to: c.to, reasons: c.reasons, residents: z.residents, vulnerable: z.vulnerable });
+      }
+    }
     if (autoAlerts) {
       for (const c of changes) {
         if (levelIndex(c.to) > levelIndex(c.from) && levelIndex(c.to) >= levelIndex("medium")) await sendZoneAlerts(sql, c.zoneId, { actor: "risk-engine" });

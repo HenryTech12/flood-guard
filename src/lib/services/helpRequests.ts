@@ -9,6 +9,8 @@ import type { LocationSource, LngLat, RiskLevel, VulnerableType } from "../core/
 import { publishChange } from "../realtime/server";
 import { audit } from "./audit";
 import { runDispatch } from "./dispatch";
+import { env } from "../env";
+import { notifyOpsCriticalRequest } from "./notify";
 import { getResidentByPhone, insideFlood, zoneForPoint, type ResidentRef } from "./reference";
 
 export interface HelpLocation {
@@ -105,6 +107,7 @@ export async function createOrMergeHelpRequest(sql: Sql, input: HelpInput): Prom
   });
 
   if (result.merged) await recomputeUrgency(sql, [result.id]);
+  else await notifyCriticalOnce(sql, [result.id]);
   await publishChange("requests");
   if (!input.skipDispatch) await runDispatch(sql);
   return { ...result, resident };
@@ -119,6 +122,25 @@ export async function updateRequestLocation(sql: Sql, requestId: string, loc: He
   await audit(sql, actor, "help_request", requestId, "located", null, loc.source, { landmark: loc.landmarkId ?? null });
   await recomputeUrgency(sql, [requestId]);
   await publishChange("requests");
+}
+
+/**
+ * Email SEMA staff once per request, the first time its urgency reaches the threshold.
+ * The UPDATE … WHERE ops_notified_at IS NULL claim makes this safe under concurrent ticks.
+ */
+export async function notifyCriticalOnce(sql: Sql, ids?: string[]) {
+  if (!env.opsNotifyEmails.length) return 0;
+  const filter = ids?.length ? sql`and h.id = any(${ids}::uuid[])` : sql``;
+  const due = await sql<{ id: string; ref_code: string; urgency_score: number; urgency_reasons: { label: string; points: number }[]; people_count: number; location_source: string; zone: string | null; landmark: string | null }[]>`
+    with claimed as (
+      update help_requests h set ops_notified_at = now()
+      where h.ops_notified_at is null and h.status in ('new', 'assigned', 'en_route') and h.urgency_score >= ${env.opsNotifyMinUrgency} ${filter}
+      returning h.*)
+    select c.id, c.ref_code, c.urgency_score, c.urgency_reasons, c.people_count, c.location_source, z.name zone, l.name landmark
+    from claimed c left join zones z on z.id = c.zone_id left join landmarks l on l.id = c.landmark_id`;
+  for (const h of due)
+    await notifyOpsCriticalRequest(sql, { id: h.id, ref: h.ref_code, urgency: h.urgency_score, reasons: h.urgency_reasons, people: h.people_count, zoneName: h.zone, place: h.landmark, locationSource: h.location_source });
+  return due.length;
 }
 
 /** Recompute urgency for open requests (all, or the given ids). Returns how many changed. */
@@ -136,5 +158,6 @@ export async function recomputeUrgency(sql: Sql, ids?: string[], now = new Date(
       if (u.score !== r.urgency_score) changed++;
     }
   }
+  if (changed || ids?.length) await notifyCriticalOnce(sql, ids);
   return changed;
 }

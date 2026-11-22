@@ -96,8 +96,13 @@ test("early warning → help → dispatch → rescue → family notified", async
   await expect(cmd.getByTestId("closed-FG-1001")).toContainText("Rescued");
   await expect(cmd.getByTestId("stat-rescued")).toHaveText("1");
 
-  const family = (await messages(api, "family_safe")).filter((m) => FAMILY.includes(m.to));
+  const familyAll = await messages(api, "family_safe");
+  const family = familyAll.filter((m) => FAMILY.includes(m.to));
   expect(family).toHaveLength(2);
+  // The son also registered an email: he gets an "is safe" email (Brevo, or mock here).
+  const famEmail = familyAll.find((m) => m.channel === "email");
+  expect(famEmail?.to).toBe("chinedu.adefake@example.com");
+  expect(famEmail?.body).toContain("Mama Ngozi Adefake");
   expect(family[0].body).toContain("Mama Ngozi Adefake");
   await expect(sim.getByTestId("sim-thread")).toContainText("RESCUED");
 

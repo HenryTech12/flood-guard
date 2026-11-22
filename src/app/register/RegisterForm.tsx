@@ -21,10 +21,10 @@ const LANGS = [
 
 export default function RegisterForm() {
   const [zones, setZones] = useState<Zone[]>([]);
-  const [f, setF] = useState({ phone: "", name: "", lang: "en", zoneId: "", landmarkId: "", shareLocation: true, consent: false, onBehalf: false, registeredBy: "" });
+  const [f, setF] = useState({ phone: "", name: "", email: "", lang: "en", zoneId: "", landmarkId: "", shareLocation: true, consent: false, onBehalf: false, registeredBy: "" });
   const [gps, setGps] = useState<[number, number] | null>(null);
   const [vuln, setVuln] = useState<Record<string, { count: number; notes: string } | undefined>>({});
-  const [family, setFamily] = useState([{ phone: "", name: "" }]);
+  const [family, setFamily] = useState([{ phone: "", name: "", email: "" }]);
   const [msg, setMsg] = useState<{ ok: boolean; text: string } | null>(null);
 
   useEffect(() => {
@@ -45,6 +45,7 @@ export default function RegisterForm() {
           await postJson("/api/register", {
             phone: f.phone,
             name: f.name,
+            email: f.email || null,
             lang: f.lang,
             zoneId: f.zoneId,
             landmarkId: f.landmarkId || null,
@@ -55,7 +56,7 @@ export default function RegisterForm() {
             vulnerable: Object.entries(vuln)
               .filter(([, v]) => v)
               .map(([type, v]) => ({ type, count: v!.count, notes: v!.notes || null })),
-            family: family.filter((x) => x.phone.trim()).map((x) => ({ phone: x.phone, name: x.name || null })),
+            family: family.filter((x) => x.phone.trim()).map((x) => ({ phone: x.phone, name: x.name || null, email: x.email || null })),
           });
           setMsg({ ok: true, text: "Registered. A confirmation SMS has been sent. You will receive flood alerts for this area." });
         } catch (e) {
@@ -71,6 +72,7 @@ export default function RegisterForm() {
       <div className="grid gap-4 sm:grid-cols-2">
         <Input label="Household phone number" value={f.phone} onChange={(v) => set("phone", v)} placeholder="0803 123 4567" required />
         <Input label="Name" value={f.name} onChange={(v) => set("name", v)} required />
+        <Input label="Email (optional — alerts also by email)" value={f.email} onChange={(v) => set("email", v)} placeholder="name@example.com" />
         <Select label="Language for alerts" value={f.lang} onChange={(v) => set("lang", v)} options={LANGS.map(([v, l]) => [v, l])} />
         <Select label="Area" value={f.zoneId} onChange={(v) => (set("zoneId", v), set("landmarkId", ""))} options={[["", "Choose…"], ...zones.map((z) => [z.id, z.name] as [string, string])]} required />
       </div>
@@ -120,12 +122,13 @@ export default function RegisterForm() {
         <legend className="px-1 text-sm font-bold">Family to tell when you are safe (up to 3)</legend>
         {family.map((x, i) => (
           <div key={i} className="mb-2 flex gap-2">
-            <input placeholder="Phone" value={x.phone} onChange={(e) => setFamily((fm) => fm.map((y, j) => (j === i ? { ...y, phone: e.target.value } : y)))} className="flex-1 rounded bg-slate-800 px-2 py-2" />
-            <input placeholder="Name" value={x.name} onChange={(e) => setFamily((fm) => fm.map((y, j) => (j === i ? { ...y, name: e.target.value } : y)))} className="flex-1 rounded bg-slate-800 px-2 py-2" />
+            <input placeholder="Phone" value={x.phone} onChange={(e) => setFamily((fm) => fm.map((y, j) => (j === i ? { ...y, phone: e.target.value } : y)))} className="min-w-0 flex-1 rounded bg-slate-800 px-2 py-2" />
+            <input placeholder="Name" value={x.name} onChange={(e) => setFamily((fm) => fm.map((y, j) => (j === i ? { ...y, name: e.target.value } : y)))} className="min-w-0 flex-1 rounded bg-slate-800 px-2 py-2" />
+            <input placeholder="Email (optional)" type="email" value={x.email} onChange={(e) => setFamily((fm) => fm.map((y, j) => (j === i ? { ...y, email: e.target.value } : y)))} className="min-w-0 flex-1 rounded bg-slate-800 px-2 py-2" />
           </div>
         ))}
         {family.length < 3 && (
-          <button type="button" onClick={() => setFamily((fm) => [...fm, { phone: "", name: "" }])} className="text-sm text-sky-400">
+          <button type="button" onClick={() => setFamily((fm) => [...fm, { phone: "", name: "", email: "" }])} className="text-sm text-sky-400">
             + add another
           </button>
         )}
@@ -134,7 +137,7 @@ export default function RegisterForm() {
       <label className="flex items-start gap-3 rounded-xl border border-sky-900 bg-sky-950/30 p-4">
         <input type="checkbox" required checked={f.consent} onChange={(e) => set("consent", e.target.checked)} className="mt-1 h-5 w-5" />
         <span className="text-sm">
-          <b>Consent.</b> {f.onBehalf ? "The person being registered agrees" : "I agree"} that FloodGuard stores this phone number, area, home location (if given), household needs and family contacts <b>only</b> to send flood warnings and to
+          <b>Consent.</b> {f.onBehalf ? "The person being registered agrees" : "I agree"} that FloodGuard stores this phone number, email (if given), area, home location (if given), household needs and family contacts <b>only</b> to send flood warnings and to
           prioritise and guide rescue. It is not shared for any other purpose. You can stop alerts by sending STOP, or erase everything by sending DELETE, at any time. See the{" "}
           <a href="/privacy" className="text-sky-400 underline" target="_blank">
             privacy notice

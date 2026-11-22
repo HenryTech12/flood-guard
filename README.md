@@ -151,6 +151,7 @@ The brief's tables are all present (`supabase/migrations/0001_schema.sql`). I ma
 | `location_source` adds `unknown` | an unregistered SMS with no landmark is still accepted; the resident is asked to reply with a landmark |
 | `help_requests` + `ref_code`, `urgency_reasons`, `vulnerable` snapshot, `inside_flood`, `channel`, `merged_count`, `failed_attempts`, `close_reason` | references in replies, explainability, dispatch, audit |
 | `rescue_jobs` + `status`, `expires_at`, `operator_assigned` | ride-hailing offers; partial unique indexes give one live job per volunteer and per request |
+| `residents.email`, `family_contacts.email`, email columns on `outbound_messages`, `help_requests.ops_notified_at` (migration 0003) | optional email channel via Brevo |
 | `inbound_messages` (unique provider id), `outbound_messages` (queue) | idempotent webhooks; retries with backoff; demo message log |
 | `alert_deliveries` | per-resident de-duplication of alerts |
 | `rainfall_readings`, `flood_extents`, `zone_risk_snapshots` | risk engine inputs and the timeline slider |
@@ -181,6 +182,24 @@ The brief's tables are all present (`supabase/migrations/0001_schema.sql`). I ma
 
 The `MessagingProvider` interface (`src/lib/messaging/provider.ts`) makes other gateways (Termii, Twilio, a local telco) a single class.
 
+## Email notifications (Brevo)
+
+Email is an extra channel alongside SMS/voice, sent through the same outbox (retries, backoff, visible in the `/demo` log):
+
+| Who | When | Content |
+|---|---|---|
+| SEMA staff (`OPS_NOTIFY_EMAILS`) | a zone rises to **HIGH/SEVERE** | level change, reasons, residents + vulnerable households, link to `/command` |
+| SEMA staff | a help request **first reaches** urgency ≥ `OPS_NOTIFY_MIN_URGENCY` (default 70) — at creation or later as zone risk/waiting time grow; once per request | urgency breakdown, people, location precision |
+| Residents with an email | flood alerts (MEDIUM+), same de-duplication as SMS | alert in their language (English fallback) |
+| Family contacts with an email | rescue completed or SAFE check-in | "{name} is safe" |
+
+Setup:
+1. Create a Brevo account → **Senders, Domains & Dedicated IPs → Senders**: add and verify the sender address (authenticate your domain for better deliverability).
+2. **SMTP & API → API Keys**: create a key.
+3. Set `EMAIL_PROVIDER=brevo`, `BREVO_API_KEY`, `EMAIL_FROM` (the verified sender), `EMAIL_FROM_NAME`, `OPS_NOTIFY_EMAILS=ops1@…,ops2@…`.
+
+With `EMAIL_PROVIDER=mock` (default) emails are only logged. Seed data uses `@example.com` addresses, which never deliver. Brevo's free plan sends 300 emails/day — fine for staff notifications and families; for mass resident alerts use a paid plan. Email addresses are optional and collected with the same consent as phone numbers; `DELETE` by SMS erases them.
+
 ## Deploying (Vercel + Supabase)
 
 1. **Supabase:** create a project → *Database → Extensions*: enable `postgis`. Copy the connection strings.
@@ -190,7 +209,7 @@ The `MessagingProvider` interface (`src/lib/messaging/provider.ts`) makes other 
    - `DATABASE_URL` = the **transaction pooler** URL (port 6543)
    - `AUTH_SECRET`, `DEMO_MODE`, `DEMO_KEY`, `MESSAGING_PROVIDER=mock`, `PUBLIC_BASE_URL=https://<app>.vercel.app`
    - for instant cross-instance live updates: `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY`
-   - optional: `CRON_SECRET`, `ORS_API_KEY`
+   - optional: `CRON_SECRET`, `ORS_API_KEY`, and the Brevo variables (`EMAIL_PROVIDER`, `BREVO_API_KEY`, `EMAIL_FROM`, `OPS_NOTIFY_EMAILS`)
 4. Optional unattended heartbeat: run `supabase/optional/pg_cron_tick.sql` (with your URL and `CRON_SECRET`).
 
 On Vercel, `/api/stream` (SSE) cannot see events from other instances. Set the Supabase Realtime variables, or dashboards fall back to 5-second polling, which still works.

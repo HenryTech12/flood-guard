@@ -140,11 +140,12 @@ export async function seedDatabase(sql: Sql, region: RegionConfig, opts: SeedOpt
     }
 
     // Residents
-    type R = { phone: string; name: string; lang: Lang; zone_id: string; lng: number; lat: number; vulnerable: { type: VulnerableType; count: number }[]; family: { phone: string; name: string }[] };
+    type R = { phone: string; name: string; email?: string; lang: Lang; zone_id: string; lng: number; lat: number; vulnerable: { type: VulnerableType; count: number }[]; family: { phone: string; name: string; email?: string }[] };
     const residents: R[] = [];
     const total = opts.residents ?? 200;
     let familyN = 0;
     const famPhone = () => `+234800200${String(++familyN).padStart(4, "0")}`;
+    // Demo emails use example.com (reserved — never delivered even with EMAIL_PROVIDER=brevo).
 
     // Named demo residents (pre-selected in /sim).
     const zoneCfg = (id: string) => region.zones.find((z) => z.id === id) ?? region.zones[0];
@@ -160,10 +161,10 @@ export async function seedDatabase(sql: Sql, region: RegionConfig, opts: SeedOpt
         phone: region.demoResidentPhone, name: "Mama Ngozi Adefake", lang: "pcm", zone_id: z0,
         ...((([lng, lat]) => ({ lng, lat }))(lmLoc(z0, 1, [-0.0015, -0.0005]))),
         vulnerable: [{ type: "elderly", count: 1 }, { type: "child_under5", count: 1 }],
-        family: [{ phone: famPhone(), name: "Chinedu Adefake (son)" }, { phone: famPhone(), name: "Ada Adefake (daughter)" }],
+        family: [{ phone: famPhone(), name: "Chinedu Adefake (son)", email: "chinedu.adefake@example.com" }, { phone: famPhone(), name: "Ada Adefake (daughter)" }],
       },
       {
-        phone: "+2348000000002", name: "John Okonfake", lang: "en", zone_id: z1,
+        phone: "+2348000000002", name: "John Okonfake", email: "john.okonfake@example.com", lang: "en", zone_id: z1,
         ...((([lng, lat]) => ({ lng, lat }))(lmLoc(z1, 2, [-0.002, 0.001]))),
         vulnerable: [{ type: "pregnant", count: 1 }],
         family: [{ phone: famPhone(), name: "Mary Okonfake (sister)" }],
@@ -210,17 +211,17 @@ export async function seedDatabase(sql: Sql, region: RegionConfig, opts: SeedOpt
     }
 
     const inserted = await tx<{ id: string; phone: string }[]>`
-      insert into residents (phone, name, preferred_language, home, zone_id, consent_location, consent_at, registered_by, is_seed)
-      select x.phone, x.name, x.lang, ST_SetSRID(ST_MakePoint(x.lng, x.lat), 4326), x.zone_id, true, now(), 'seed', true
-      from jsonb_to_recordset(${JSON.stringify(residents)}::text::jsonb) as x(phone text, name text, lang text, zone_id text, lng float8, lat float8)
+      insert into residents (phone, name, email, preferred_language, home, zone_id, consent_location, consent_at, registered_by, is_seed)
+      select x.phone, x.name, x.email, x.lang, ST_SetSRID(ST_MakePoint(x.lng, x.lat), 4326), x.zone_id, true, now(), 'seed', true
+      from jsonb_to_recordset(${JSON.stringify(residents)}::text::jsonb) as x(phone text, name text, email text, lang text, zone_id text, lng float8, lat float8)
       returning id, phone`;
     const idByPhone = new Map(inserted.map((r) => [r.phone, r.id]));
     const vuln = residents.flatMap((r) => r.vulnerable.map((v) => ({ resident_id: idByPhone.get(r.phone), type: v.type, count: v.count })));
-    const fam = residents.flatMap((r) => r.family.map((f) => ({ resident_id: idByPhone.get(r.phone), phone: f.phone, name: f.name })));
+    const fam = residents.flatMap((r) => r.family.map((f) => ({ resident_id: idByPhone.get(r.phone), phone: f.phone, name: f.name, email: f.email ?? null })));
     if (vuln.length)
       await tx`insert into vulnerable_members (resident_id, type, count) select x.resident_id, x.type, x.count from jsonb_to_recordset(${JSON.stringify(vuln)}::text::jsonb) as x(resident_id uuid, type text, count int)`;
     if (fam.length)
-      await tx`insert into family_contacts (resident_id, phone, name) select x.resident_id, x.phone, x.name from jsonb_to_recordset(${JSON.stringify(fam)}::text::jsonb) as x(resident_id uuid, phone text, name text)`;
+      await tx`insert into family_contacts (resident_id, phone, name, email) select x.resident_id, x.phone, x.name, x.email from jsonb_to_recordset(${JSON.stringify(fam)}::text::jsonb) as x(resident_id uuid, phone text, name text, email text)`;
 
     // Operator accounts
     const pw = opts.operatorPassword ?? process.env.SEED_OPERATOR_PASSWORD ?? "floodguard-demo";

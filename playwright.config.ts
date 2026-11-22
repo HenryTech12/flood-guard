@@ -28,6 +28,6 @@ export default defineConfig({
         url: `http://localhost:${port}/api/public/zones`,
         timeout: 300_000,
         reuseExistingServer: !process.env.CI,
-        env: { DEMO_MODE: "true", MESSAGING_PROVIDER: "mock", DEMO_KEY: process.env.DEMO_KEY ?? "floodguard-demo", PUBLIC_BASE_URL: `http://localhost:${port}` },
+        env: { DEMO_MODE: "true", MESSAGING_PROVIDER: "mock", EMAIL_PROVIDER: "mock", OPS_NOTIFY_EMAILS: process.env.OPS_NOTIFY_EMAILS ?? "sema-ops@example.com", DEMO_KEY: process.env.DEMO_KEY ?? "floodguard-demo", PUBLIC_BASE_URL: `http://localhost:${port}` },
       },
 });

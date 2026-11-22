@@ -76,5 +76,21 @@
     "reg_done": "",
     "cancelled": "",
     "invalid": ""
+  },
+  "email": {
+    "alert_subject": {
+      "medium": "",
+      "high": "",
+      "severe": ""
+    },
+    "alert_title": {
+      "medium": "",
+      "high": "",
+      "severe": ""
+    },
+    "safe_subject": "",
+    "safe_rescued": "",
+    "safe_checkin": "",
+    "footer": ""
   }
 }
