@@ -93,7 +93,7 @@ export default function PhoneSim({ presets, ussdCode, shortcode, exampleLandmark
       {/* phone body */}
       <div className="w-[320px] rounded-[42px] border-4 border-slate-200 bg-gradient-to-b from-slate-200 to-slate-100 p-5 shadow-2xl">
         <div className="mb-2 text-center text-[11px] font-bold tracking-[0.3em] text-slate-500">FLOODPHONE 1100</div>
-        <div className="flex h-[360px] flex-col overflow-hidden rounded-lg border-2 border-slate-50 bg-[#b8c9a3] font-mono text-[13px] text-slate-100 shadow-inner">
+        <div className="flex h-[360px] flex-col overflow-hidden rounded-lg border-2 border-slate-50 bg-[#b8c9a3] font-mono text-[13px] text-[#1f2a17] shadow-inner">
           <div className="flex justify-between bg-[#a5b78f] px-2 py-0.5 text-[10px]">
             <span>▂▄▆ MTN</span>
             <span>{mode === "sms" ? "Messages" : "USSD"}</span>
@@ -103,7 +103,7 @@ export default function PhoneSim({ presets, ussdCode, shortcode, exampleLandmark
             <div className="flex-1 space-y-1.5 overflow-y-auto p-2" data-testid="sim-thread">
               {thread.length === 0 && <div className="mt-10 text-center opacity-60">No messages</div>}
               {thread.map((m) => (
-                <div key={m.id} className={`max-w-[88%] rounded px-2 py-1 leading-snug ${m.dir === "out" ? "ml-auto bg-slate-50/80 text-[#d9e8c4]" : "bg-[#dfe9d2]"}`}>
+                <div key={m.id} className={`max-w-[88%] rounded px-2 py-1 leading-snug ${m.dir === "out" ? "ml-auto bg-[#2f3d25] text-[#e3eed3]" : "bg-[#dfe9d2]"}`}>
                   {m.channel === "voice" ? (
                     <div>
                       <b>📞 Incoming voice alert</b>
@@ -123,7 +123,7 @@ export default function PhoneSim({ presets, ussdCode, shortcode, exampleLandmark
               {!ussd ? (
                 <div className="m-auto text-center">
                   <div className="text-lg font-bold">{ussdCode}</div>
-                  <button onClick={() => void ussdSend([], `sim-${crypto.randomUUID()}`)} className="mt-3 rounded bg-green-700 px-4 py-1 font-bold text-slate-900" data-testid="ussd-dial">
+                  <button onClick={() => void ussdSend([], `sim-${crypto.randomUUID()}`)} className="mt-3 rounded bg-green-700 px-4 py-1 font-bold text-white" data-testid="ussd-dial">
                     📞 Dial
                   </button>
                 </div>
