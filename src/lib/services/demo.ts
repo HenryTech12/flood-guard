@@ -140,7 +140,7 @@ export async function setDemoFlags(sql: Sql, flags: { autopilot?: boolean; moveV
 export async function resetDemo(sql: Sql) {
   await sql.begin(async (tx) => {
     await tx.unsafe(`
-      truncate table volunteer_positions, rescue_jobs, help_requests, crowd_reports, checkins, alerts, alert_deliveries,
+      truncate table flood_events, voice_recordings, volunteer_positions, rescue_jobs, help_requests, crowd_reports, checkins, alerts, alert_deliveries,
         outbound_messages, inbound_messages, zone_risk_snapshots, audit_log, otp_codes restart identity cascade;
       alter sequence help_ref_seq restart with 1001;
       delete from residents where not is_seed;

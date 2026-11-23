@@ -59,6 +59,25 @@ The same flow runs automatically in `tests/e2e/core-flow.spec.ts` (≈11 s).
 
 ---
 
+## Citizen portal & Authority dashboard
+
+The public UI follows the Guardy design, rebuilt in Next.js and wired into FloodGuard's backend:
+
+| Page | What it does |
+|---|---|
+| `/` | Landing page: hero, stats, **Register for Flood Alerts** (email double opt-in, auto-detected area), role cards for Citizen / Authority |
+| `/citizen` | **Flood Risk Monitor** for your detected location (live weather + GloFAS river discharge + your FloodGuard zone risk; optional ML score), **Emergency Report** form (name, phone, people, type of need, comments, **voice note up to 2 min**, GPS), **Weather Monitor** for Nigerian cities, **Flood Alerts**, map with hospitals/shelters, **Emergency Centers** with call buttons |
+| `/authority` | Operator-only. Stats, filters by status and need type, every report from **web, SMS and USSD** with urgency score, voice playback, notified centres and assigned volunteer; Mark as Responded / Resolved (Resolved sends the family "is safe" SMS); recent flood events; **upload flood data** (JSON) that alerts people within 20 km; emergency centres |
+| `/command` | The live command map (dispatch, volunteers, hotspots) |
+
+Improvements over Guardy: one database for web, SMS and USSD requests; web reports are deduplicated, ranked and auto-dispatched to the nearest volunteer; the 3 nearest centres within 10 km get SMS + email; voice notes are stored server-side and only operators and the assigned volunteer can play them; per-IP rate limit on reports; weather calls are server-side and cached (no API key in the browser) with an offline estimate when the weather service is down; weather-triggered events are deduplicated per hour.
+
+Weather/river data: [Open-Meteo](https://open-meteo.com) (forecast + GloFAS flood API, no key). Place names: OpenStreetMap Nominatim, with a landmark fallback.
+
+### Optional AI microservice (`ai-microservice/`)
+
+The Guardy FastAPI service (risk scorer, nowcaster, anomaly detector) is included as-is. It ships **without trained model files**: run the scripts in `ai-microservice/scripts/` to train them, deploy it (Docker / Render), then set `AI_SERVICE_URL` (and `AI_SERVICE_KEY` if you enable its API key). When unset, the citizen page just omits the ML score.
+
 ## Architecture
 
 ```mermaid

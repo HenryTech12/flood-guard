@@ -36,6 +36,9 @@ export interface RegionShelter {
   capacity: number;
   occupancy: number;
   contactPhone: string;
+  /** Emergency centre type (default "shelter"). Hospitals are notified about nearby reports too. */
+  type?: "shelter" | "hospital";
+  email?: string;
 }
 
 export interface RegionVolunteer {

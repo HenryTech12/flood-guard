@@ -7,7 +7,7 @@ export const dynamic = "force-dynamic";
 export const metadata = { title: "Phone simulator" };
 
 export default function SimPage() {
-  if (!env.demoMode) return <main className="p-10 text-center text-slate-400">The phone simulator is only available in demo mode.</main>;
+  if (!env.demoMode) return <main className="p-10 text-center text-slate-600">The phone simulator is only available in demo mode.</main>;
   const region = getRegion();
   const zoneName = (i: number) => region.zones.find((z) => z.id === region.demoZones[i])?.shortName ?? region.zones[i % region.zones.length].shortName;
   const presets = [
@@ -19,8 +19,8 @@ export default function SimPage() {
   return (
     <main className="mx-auto grid max-w-5xl gap-8 px-4 py-8 md:grid-cols-[1fr_360px]">
       <PhoneSim presets={presets} ussdCode={region.ussdCode} shortcode={region.smsShortcode} exampleLandmark={region.exampleLandmark} />
-      <aside className="space-y-4 text-sm text-slate-300">
-        <h1 className="text-2xl font-black text-slate-50">Phone simulator</h1>
+      <aside className="space-y-4 text-sm text-slate-700">
+        <h1 className="text-2xl font-black text-slate-900">Phone simulator</h1>
         <p>
           This basic phone sends real SMS and USSD requests into FloodGuard&apos;s webhooks, exactly as Africa&apos;s Talking would. Replies, alerts and
           &ldquo;is safe&rdquo; messages appear on the phone. Nothing is sent to real numbers.
@@ -46,7 +46,7 @@ export default function SimPage() {
           <Link href="/command" target="_blank" className="rounded-lg bg-sky-700 px-4 py-2 text-center font-bold hover:bg-sky-600">
             Open command map (2nd screen) ↗
           </Link>
-          <Link href="/volunteer" target="_blank" className="rounded-lg bg-slate-800 px-4 py-2 text-center font-bold hover:bg-slate-700">
+          <Link href="/volunteer" target="_blank" className="rounded-lg bg-slate-100 px-4 py-2 text-center font-bold hover:bg-slate-300">
             Open volunteer app ↗
           </Link>
           <Link href="/demo" className="rounded-lg border border-sky-300 px-4 py-2 text-center font-bold text-sky-700 hover:bg-sky-100">

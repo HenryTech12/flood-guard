@@ -124,7 +124,7 @@ export default function VolunteerApp({ demo, demoPhone }: { demo: boolean; demoP
           <div className="text-lg font-black">
             {ICON[v.type]} {v.name}
           </div>
-          <div className="text-xs text-slate-400">
+          <div className="text-xs text-slate-600">
             {v.type.replaceAll("_", " ")} · carries {v.capacity}
           </div>
         </div>
@@ -146,7 +146,7 @@ export default function VolunteerApp({ demo, demoPhone }: { demo: boolean; demoP
               await post("/api/volunteer/availability", { available: !v.available, lngLat });
             })
           }
-          className={`mt-4 w-full rounded-2xl py-5 text-2xl font-black ${v.available ? "bg-green-600" : "bg-slate-700"}`}
+          className={`mt-4 w-full rounded-2xl py-5 text-2xl font-black ${v.available ? "bg-green-600" : "bg-slate-300"}`}
         >
           {v.available ? "● AVAILABLE" : "○ OFF DUTY — tap to go on duty"}
         </button>
@@ -164,19 +164,19 @@ export default function VolunteerApp({ demo, demoPhone }: { demo: boolean; demoP
           <div className="mt-1 text-xl">
             👥 {offer.request.people} people · {dist(offer.distanceM)} away
           </div>
-          <div className="text-slate-300">
+          <div className="text-slate-700">
             📍 {offer.request.landmark ?? offer.request.zone ?? "Unknown area"} {offer.request.insideFlood && "· 🌊 flooded area"}
           </div>
           <div className="mt-2 text-sm">
             <b>Urgency {offer.request.urgency}</b>
-            <ul className="text-slate-300">
+            <ul className="text-slate-700">
               {offer.request.reasons.map((r) => (
                 <li key={r.label}>• {r.label}</li>
               ))}
             </ul>
           </div>
           <div className="mt-4 grid grid-cols-2 gap-3">
-            <button disabled={busy} onClick={() => run(() => post(`/api/volunteer/jobs/${offer.jobId}`, { action: "decline" }))} className="rounded-xl bg-slate-700 py-4 text-xl font-bold">
+            <button disabled={busy} onClick={() => run(() => post(`/api/volunteer/jobs/${offer.jobId}`, { action: "decline" }))} className="rounded-xl bg-slate-300 py-4 text-xl font-bold">
               Decline
             </button>
             <button data-testid="accept" disabled={busy} onClick={() => run(() => post(`/api/volunteer/jobs/${offer.jobId}`, { action: "accept" }))} className="rounded-xl bg-green-600 py-4 text-xl font-black">
@@ -188,8 +188,8 @@ export default function VolunteerApp({ demo, demoPhone }: { demo: boolean; demoP
 
       {job && <ActiveJob job={job} shelters={me.shelters} simMove={v.simMove} demo={demo} busy={busy} run={run} />}
 
-      {!offer && !job && v.available && <div className="mt-8 text-center text-slate-400">Waiting for rescue jobs near you… keep this screen open.</div>}
-      <p className="mt-8 text-center text-xs text-slate-600">Your location is shared only while you are on a job.</p>
+      {!offer && !job && v.available && <div className="mt-8 text-center text-slate-600">Waiting for rescue jobs near you… keep this screen open.</div>}
+      <p className="mt-8 text-center text-xs text-slate-400">Your location is shared only while you are on a job.</p>
     </Shell>
   );
 }
@@ -202,19 +202,19 @@ function ActiveJob({ job, shelters, simMove, demo, busy, run }: { job: JobView; 
   const [lng, lat] = job.request.lngLat;
   const r = job.request;
   return (
-    <section className="mt-4 rounded-2xl border-2 border-sky-500 bg-slate-900 p-4" data-testid="job">
+    <section className="mt-4 rounded-2xl border-2 border-sky-500 bg-slate-50 p-4" data-testid="job">
       <div className="text-xs font-bold uppercase tracking-wider text-sky-700">{job.arrivedAt ? "On scene" : "On the way"}</div>
       <div className="text-3xl font-black">{r.ref}</div>
       <div className="mt-1 text-xl">
         {r.name ?? "Unregistered caller"} · 👥 {r.people}
       </div>
       {r.vulnerable.length > 0 && <div className="text-pink-700">💗 {r.vulnerable.map((x) => `${x.count > 1 ? x.count + " " : ""}${VULN_LABEL[x.type] ?? x.type}`).join(", ")}</div>}
-      {r.message && <div className="mt-1 italic text-slate-300">“{r.message}”</div>}
-      <div className="mt-1 text-slate-300">
+      {r.message && <div className="mt-1 italic text-slate-700">“{r.message}”</div>}
+      <div className="mt-1 text-slate-700">
         📍 {r.landmark ?? r.zone ?? "?"} — <span className="font-semibold text-sky-700">{SRC[r.locationSource] ?? r.locationSource}</span> · {dist(job.distanceM)}
       </div>
       <div className="mt-3 grid grid-cols-2 gap-3">
-        <a href={`tel:${r.phone}`} className="rounded-xl bg-slate-700 py-3 text-center text-lg font-bold">
+        <a href={`tel:${r.phone}`} className="rounded-xl bg-slate-300 py-3 text-center text-lg font-bold">
           📞 Call
         </a>
         <a href={`https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}`} target="_blank" rel="noreferrer" className="rounded-xl bg-sky-700 py-3 text-center text-lg font-bold">
@@ -227,13 +227,13 @@ function ActiveJob({ job, shelters, simMove, demo, busy, run }: { job: JobView; 
         </label>
       )}
       {!job.arrivedAt && (
-        <button data-testid="arrived" disabled={busy} onClick={() => run(() => post(`/api/volunteer/jobs/${job.jobId}`, { action: "arrived" }))} className="mt-3 w-full rounded-xl bg-slate-600 py-4 text-xl font-bold">
+        <button data-testid="arrived" disabled={busy} onClick={() => run(() => post(`/api/volunteer/jobs/${job.jobId}`, { action: "arrived" }))} className="mt-3 w-full rounded-xl bg-slate-400 py-4 text-xl font-bold">
           I have arrived
         </button>
       )}
       <div className="mt-3">
-        <label className="text-sm text-slate-400">Take them to:</label>
-        <select value={shelterId} onChange={(e) => setShelterId(e.target.value)} className="mt-1 w-full rounded-lg bg-slate-800 p-3">
+        <label className="text-sm text-slate-600">Take them to:</label>
+        <select value={shelterId} onChange={(e) => setShelterId(e.target.value)} className="mt-1 w-full rounded-lg bg-slate-100 p-3">
           {shelters.map((s) => (
             <option key={s.id} value={s.id}>
               {s.name} — {s.capacity - s.occupancy} spaces · {dist(s.distanceM ?? null)}
@@ -263,7 +263,7 @@ function Login({ demo, demoPhone, onDone }: { demo: boolean; demoPhone: string; 
   return (
     <Shell>
       <h1 className="text-2xl font-black">Volunteer login</h1>
-      <p className="text-slate-400">Boat owners, drivers and responders</p>
+      <p className="text-slate-600">Boat owners, drivers and responders</p>
       <form
         className="mt-4 space-y-3"
         onSubmit={async (e) => {
@@ -283,8 +283,8 @@ function Login({ demo, demoPhone, onDone }: { demo: boolean; demoPhone: string; 
           }
         }}
       >
-        <input data-testid="phone" className="w-full rounded-xl bg-slate-800 p-4 text-xl" inputMode="tel" placeholder="Phone number" value={phone} onChange={(e) => setPhone(e.target.value)} disabled={sent} />
-        {sent && <input data-testid="code" className="w-full rounded-xl bg-slate-800 p-4 text-center font-mono text-2xl tracking-widest" inputMode="numeric" placeholder="6-digit code" value={code} onChange={(e) => setCode(e.target.value)} autoFocus />}
+        <input data-testid="phone" className="w-full rounded-xl bg-slate-100 p-4 text-xl" inputMode="tel" placeholder="Phone number" value={phone} onChange={(e) => setPhone(e.target.value)} disabled={sent} />
+        {sent && <input data-testid="code" className="w-full rounded-xl bg-slate-100 p-4 text-center font-mono text-2xl tracking-widest" inputMode="numeric" placeholder="6-digit code" value={code} onChange={(e) => setCode(e.target.value)} autoFocus />}
         {hint && <div className="text-sm text-sky-700">{hint}</div>}
         {err && <div className="text-sm text-red-700">{err}</div>}
         <button data-testid="login-submit" className="w-full rounded-xl bg-sky-600 py-4 text-xl font-bold">

@@ -209,6 +209,7 @@ export const lokoja: RegionConfig = {
     { id: "sh-gra-civic", name: "GRA Civic Centre", location: [6.728, 7.816], capacity: 300, occupancy: 40, contactPhone: "+2348003000003" },
     { id: "sh-otokiti-sec", name: "Otokiti Secondary School", location: [6.728, 7.803], capacity: 200, occupancy: 15, contactPhone: "+2348003000004" },
     { id: "sh-natako-camp", name: "Natako Hilltop Camp", location: [6.742, 7.84], capacity: 400, occupancy: 120, contactPhone: "+2348003000005" },
+    { id: "hp-lokoja-fmc", name: "Lokoja Medical Centre", type: "hospital", location: [6.735, 7.8], capacity: 150, occupancy: 90, contactPhone: "+2348003000006", email: "lokoja-mc@example.com" },
   ],
   volunteers: [
     // The presenter's account (log in at /volunteer with this phone, OTP 123456 in demo mode).

@@ -64,7 +64,7 @@ export default function ReportForm() {
           ["drain_blocked", "🕳 Drain blocked"],
           ["other", "❗ Other"],
         ].map(([v, l]) => (
-          <button type="button" key={v} onClick={() => setType(v)} className={`rounded-xl px-3 py-3 font-bold ${type === v ? "bg-sky-600" : "bg-slate-800"}`}>
+          <button type="button" key={v} onClick={() => setType(v)} className={`rounded-xl px-3 py-3 font-bold ${type === v ? "bg-sky-600" : "bg-slate-100"}`}>
             {l}
           </button>
         ))}
@@ -72,14 +72,14 @@ export default function ReportForm() {
       {type === "water_level" && (
         <div className="flex flex-wrap gap-2">
           {DEPTHS.map(([v, l]) => (
-            <button type="button" key={v} onClick={() => setDepth(v)} className={`rounded-full px-3 py-1 ${depth === v ? "bg-blue-600" : "bg-slate-800"}`}>
+            <button type="button" key={v} onClick={() => setDepth(v)} className={`rounded-full px-3 py-1 ${depth === v ? "bg-blue-600" : "bg-slate-100"}`}>
               {l}
             </button>
           ))}
         </div>
       )}
       <div className="grid gap-3 sm:grid-cols-2">
-        <select value={zoneId} onChange={(e) => (setZoneId(e.target.value), setLandmarkId(""))} className="rounded-lg border border-slate-700 bg-slate-950 px-3 py-2">
+        <select value={zoneId} onChange={(e) => (setZoneId(e.target.value), setLandmarkId(""))} className="rounded-lg border border-slate-200 bg-white px-3 py-2">
           <option value="">Area…</option>
           {zones.map((z) => (
             <option key={z.id} value={z.id}>
@@ -87,7 +87,7 @@ export default function ReportForm() {
             </option>
           ))}
         </select>
-        <select value={landmarkId} onChange={(e) => setLandmarkId(e.target.value)} className="rounded-lg border border-slate-700 bg-slate-950 px-3 py-2">
+        <select value={landmarkId} onChange={(e) => setLandmarkId(e.target.value)} className="rounded-lg border border-slate-200 bg-white px-3 py-2">
           <option value="">Nearest landmark…</option>
           {zone?.landmarks.map((l) => (
             <option key={l.id} value={l.id}>
@@ -96,17 +96,17 @@ export default function ReportForm() {
           ))}
         </select>
       </div>
-      <button type="button" onClick={() => navigator.geolocation?.getCurrentPosition((p) => setGps([p.coords.longitude, p.coords.latitude]))} className="rounded-lg bg-slate-800 px-3 py-2 text-sm">
+      <button type="button" onClick={() => navigator.geolocation?.getCurrentPosition((p) => setGps([p.coords.longitude, p.coords.latitude]))} className="rounded-lg bg-slate-100 px-3 py-2 text-sm">
         {gps ? `📍 Using GPS ${gps[1].toFixed(4)}, ${gps[0].toFixed(4)}` : "📍 Use my GPS location instead"}
       </button>
-      <textarea value={description} onChange={(e) => setDescription(e.target.value)} placeholder="What do you see? (optional)" className="h-24 w-full rounded-lg border border-slate-700 bg-slate-950 px-3 py-2" />
-      <label className="block text-sm text-slate-400">
+      <textarea value={description} onChange={(e) => setDescription(e.target.value)} placeholder="What do you see? (optional)" className="h-24 w-full rounded-lg border border-slate-200 bg-white px-3 py-2" />
+      <label className="block text-sm text-slate-600">
         Photo (optional)
         <input type="file" accept="image/*" capture="environment" onChange={async (e) => e.target.files?.[0] && setPhoto(await shrink(e.target.files[0]))} className="mt-1 block text-sm" />
       </label>
       {/* eslint-disable-next-line @next/next/no-img-element */}
       {photo && <img src={photo} alt="preview" className="max-h-40 rounded-lg" />}
-      <input value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="Your phone (optional, so operators can call back)" className="w-full rounded-lg border border-slate-700 bg-slate-950 px-3 py-2" />
+      <input value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="Your phone (optional, so operators can call back)" className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2" />
       {msg && <div className={`rounded-lg p-3 ${msg.ok ? "bg-green-50 text-green-700" : "bg-red-50 text-red-700"}`}>{msg.text}</div>}
       <button className="w-full rounded-xl bg-sky-600 py-3 text-lg font-bold hover:bg-sky-500">Send report</button>
       <p className="text-xs text-slate-500">If someone is in danger, do not use this form — send HELP by SMS.</p>

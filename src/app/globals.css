@@ -1,25 +1,8 @@
 @import "tailwindcss";
 
 @theme {
-  /* FloodGuard palette (light): white backgrounds, navy text, blue + light-blue as the
-     main colours. The neutral "slate" scale is remapped so the whole app follows it:
-     slate-950 = page/panel background … slate-50 = strongest text.
-     Red is reserved for danger/warnings and green for safe/success. */
-  --color-slate-50: #0a2452;
-  --color-slate-100: #11305f;
-  --color-slate-200: #1c4170;
-  --color-slate-300: #2f5583;
-  --color-slate-400: #4a6e9a;
-  --color-slate-500: #6886ad;
-  --color-slate-600: #9db6d6;
-  --color-slate-700: #c3d6ee;
-  --color-slate-800: #dbe8f7;
-  --color-slate-900: #eef5fd;
-  --color-slate-950: #ffffff;
-  --color-brand-deep: #0a2452;
-  --color-brand: #0b4ea2;
-  --color-brand-light: #8fd0ff;
-  --color-brand-pale: #eaf4ff;
+  /* FloodGuard (Guardy design): standard Tailwind light palette — slate/gray neutrals,
+     blue→cyan brand gradient. Red = danger, green = safe, yellow = pending/moderate. */
   --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif;
   --font-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
   --color-risk-low: #22c55e;
@@ -30,8 +13,9 @@
 
 html,
 body {
-  background: #ffffff;
-  color: #0a2452;
+  background: #f8fafc;
+  color: #0f172a;
+  -webkit-font-smoothing: antialiased;
 }
 
 /* Solid coloured buttons and badges always get white text on the light theme
@@ -149,7 +133,7 @@ body {
   font-size: 13px;
   font-weight: 800;
   letter-spacing: 0.02em;
-  color: #0a2452;
+  color: #0f172a;
   text-shadow: 0 0 3px #fff, 0 0 6px #fff, 0 0 10px #fff;
   pointer-events: none;
   white-space: nowrap;
@@ -222,4 +206,30 @@ body {
 }
 .fg-flash {
   animation: fg-flash 1.5s ease-out;
+}
+
+/* Guardy landing animations */
+@keyframes blob {
+  0%,
+  100% {
+    transform: translate(0, 0) scale(1);
+  }
+  25% {
+    transform: translate(20px, -50px) scale(1.1);
+  }
+  50% {
+    transform: translate(-20px, 20px) scale(0.9);
+  }
+  75% {
+    transform: translate(50px, 50px) scale(1.05);
+  }
+}
+.animate-blob {
+  animation: blob 20s infinite;
+}
+.animation-delay-2000 {
+  animation-delay: 2s;
+}
+.animation-delay-4000 {
+  animation-delay: 4s;
 }

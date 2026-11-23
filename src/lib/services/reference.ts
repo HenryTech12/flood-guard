@@ -65,7 +65,7 @@ export interface ShelterRef {
 
 export async function getShelters(db: Db): Promise<ShelterRef[]> {
   const rows = await db<{ id: string; name: string; lng: number; lat: number; capacity: number; current_occupancy: number; contact_phone: string }[]>`
-    select id, name, ST_X(geom) lng, ST_Y(geom) lat, capacity, current_occupancy, contact_phone from shelters order by name`;
+    select id, name, ST_X(geom) lng, ST_Y(geom) lat, capacity, current_occupancy, contact_phone from shelters where type = 'shelter' order by name`;
   return rows.map((s) => ({ id: s.id, name: s.name, location: [s.lng, s.lat], capacity: s.capacity, occupancy: s.current_occupancy, phone: s.contact_phone }));
 }
 
@@ -73,7 +73,7 @@ export async function nearestShelters(db: Db, p: LngLat, { needSpace = 1, limit 
   const rows = await db<{ id: string; name: string; lng: number; lat: number; capacity: number; current_occupancy: number; contact_phone: string; d: number }[]>`
     select id, name, ST_X(geom) lng, ST_Y(geom) lat, capacity, current_occupancy, contact_phone,
            ST_Distance(geom::geography, ${pt(db, p)}::geography) d
-    from shelters where capacity - current_occupancy >= ${needSpace}
+    from shelters where type = 'shelter' and capacity - current_occupancy >= ${needSpace}
     order by d limit ${limit}`;
   return rows.map((s) => ({ id: s.id, name: s.name, location: [s.lng, s.lat], capacity: s.capacity, occupancy: s.current_occupancy, phone: s.contact_phone, distanceM: Math.round(s.d) }));
 }

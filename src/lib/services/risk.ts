@@ -72,6 +72,22 @@ export async function recomputeAllZones(sql: Sql, { simTime, autoAlerts = false,
     const { recomputeUrgency } = await import("./helpRequests");
     await recomputeUrgency(sql);
     await publishChange("zones");
+    // Rising zones also appear as flood events in the citizen portal (no extra messages —
+    // zone alerts below already notify residents).
+    for (const c of changes) {
+      if (levelIndex(c.to) > levelIndex(c.from) && levelIndex(c.to) >= levelIndex("medium")) {
+        const [z] = await sql<{ name: string; lng: number; lat: number; rain: number }[]>`
+          select name, ST_X(centroid) lng, ST_Y(centroid) lat, rain_24h_mm rain from zones where id = ${c.zoneId}`;
+        if (z) {
+          const { createFloodEvent } = await import("./citizen");
+          await createFloodEvent(
+            sql,
+            { location: z.name, latitude: z.lat, longitude: z.lng, severity: c.to === "medium" ? "medium" : "high", rainfall: z.rain || null, description: c.reasons.join(" · "), source: "zone", zoneId: c.zoneId, timestamp: simTime ?? new Date() },
+            { notify: false, actor },
+          );
+        }
+      }
+    }
     for (const c of changes) {
       if (levelIndex(c.to) > levelIndex(c.from) && levelIndex(c.to) >= levelIndex("high")) {
         const [z] = await sql<{ name: string; residents: number; vulnerable: number }[]>`

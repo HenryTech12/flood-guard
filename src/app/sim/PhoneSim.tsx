@@ -76,7 +76,7 @@ export default function PhoneSim({ presets, ussdCode, shortcode, exampleLandmark
   return (
     <div className="flex flex-col items-center gap-4">
       <div className="flex w-full max-w-sm flex-wrap items-center gap-2">
-        <select data-testid="sim-phone" value={phone} onChange={(e) => (setPhone(e.target.value), setUssd(null))} className="flex-1 rounded-lg border border-slate-700 bg-slate-900 px-2 py-2 text-sm">
+        <select data-testid="sim-phone" value={phone} onChange={(e) => (setPhone(e.target.value), setUssd(null))} className="flex-1 rounded-lg border border-slate-200 bg-slate-50 px-2 py-2 text-sm">
           {presets.map((p) => (
             <option key={p.phone} value={p.phone}>
               {p.label}
@@ -84,16 +84,16 @@ export default function PhoneSim({ presets, ussdCode, shortcode, exampleLandmark
           ))}
           <option value="custom">Other number…</option>
         </select>
-        {phone === "custom" && <input value={custom} onChange={(e) => setCustom(e.target.value)} placeholder="+2348…" className="w-36 rounded-lg border border-slate-700 bg-slate-900 px-2 py-2 text-sm" />}
+        {phone === "custom" && <input value={custom} onChange={(e) => setCustom(e.target.value)} placeholder="+2348…" className="w-36 rounded-lg border border-slate-200 bg-slate-50 px-2 py-2 text-sm" />}
       </div>
-      <div className="text-center text-xs text-slate-400">
+      <div className="text-center text-xs text-slate-600">
         {resident ? `${resident.name} · ${resident.zone ?? "?"} · prefers ${resident.preferred_language.toUpperCase()}` : "Unregistered number"}
       </div>
 
       {/* phone body */}
-      <div className="w-[320px] rounded-[42px] border-4 border-slate-700 bg-gradient-to-b from-slate-800 to-slate-900 p-5 shadow-2xl">
+      <div className="w-[320px] rounded-[42px] border-4 border-slate-200 bg-gradient-to-b from-slate-200 to-slate-100 p-5 shadow-2xl">
         <div className="mb-2 text-center text-[11px] font-bold tracking-[0.3em] text-slate-500">FLOODPHONE 1100</div>
-        <div className="flex h-[360px] flex-col overflow-hidden rounded-lg border-2 border-slate-950 bg-[#b8c9a3] font-mono text-[13px] text-slate-900 shadow-inner">
+        <div className="flex h-[360px] flex-col overflow-hidden rounded-lg border-2 border-slate-50 bg-[#b8c9a3] font-mono text-[13px] text-slate-100 shadow-inner">
           <div className="flex justify-between bg-[#a5b78f] px-2 py-0.5 text-[10px]">
             <span>▂▄▆ MTN</span>
             <span>{mode === "sms" ? "Messages" : "USSD"}</span>
@@ -103,7 +103,7 @@ export default function PhoneSim({ presets, ussdCode, shortcode, exampleLandmark
             <div className="flex-1 space-y-1.5 overflow-y-auto p-2" data-testid="sim-thread">
               {thread.length === 0 && <div className="mt-10 text-center opacity-60">No messages</div>}
               {thread.map((m) => (
-                <div key={m.id} className={`max-w-[88%] rounded px-2 py-1 leading-snug ${m.dir === "out" ? "ml-auto bg-slate-900/80 text-[#d9e8c4]" : "bg-[#dfe9d2]"}`}>
+                <div key={m.id} className={`max-w-[88%] rounded px-2 py-1 leading-snug ${m.dir === "out" ? "ml-auto bg-slate-50/80 text-[#d9e8c4]" : "bg-[#dfe9d2]"}`}>
                   {m.channel === "voice" ? (
                     <div>
                       <b>📞 Incoming voice alert</b>
@@ -123,7 +123,7 @@ export default function PhoneSim({ presets, ussdCode, shortcode, exampleLandmark
               {!ussd ? (
                 <div className="m-auto text-center">
                   <div className="text-lg font-bold">{ussdCode}</div>
-                  <button onClick={() => void ussdSend([], `sim-${crypto.randomUUID()}`)} className="mt-3 rounded bg-green-700 px-4 py-1 font-bold text-slate-50" data-testid="ussd-dial">
+                  <button onClick={() => void ussdSend([], `sim-${crypto.randomUUID()}`)} className="mt-3 rounded bg-green-700 px-4 py-1 font-bold text-slate-900" data-testid="ussd-dial">
                     📞 Dial
                   </button>
                 </div>
@@ -133,7 +133,7 @@ export default function PhoneSim({ presets, ussdCode, shortcode, exampleLandmark
                     {ussd.screen}
                   </pre>
                   {ussd.done ? (
-                    <button onClick={() => setUssd(null)} className="rounded bg-slate-800 py-1 font-bold text-slate-50">
+                    <button onClick={() => setUssd(null)} className="rounded bg-slate-100 py-1 font-bold text-slate-900">
                       OK
                     </button>
                   ) : (
@@ -144,9 +144,9 @@ export default function PhoneSim({ presets, ussdCode, shortcode, exampleLandmark
                         if (ussdInput.trim()) void ussdSend([...ussd.path, ussdInput.trim()], ussd.session);
                       }}
                     >
-                      <input data-testid="ussd-input" autoFocus value={ussdInput} onChange={(e) => setUssdInput(e.target.value)} className="min-w-0 flex-1 rounded border border-slate-700 bg-[#dfe9d2] px-1" />
-                      <button className="rounded bg-slate-800 px-2 font-bold text-slate-50">Send</button>
-                      <button type="button" onClick={() => setUssd(null)} className="rounded bg-red-800 px-2 font-bold text-slate-50">
+                      <input data-testid="ussd-input" autoFocus value={ussdInput} onChange={(e) => setUssdInput(e.target.value)} className="min-w-0 flex-1 rounded border border-slate-200 bg-[#dfe9d2] px-1" />
+                      <button className="rounded bg-slate-100 px-2 font-bold text-slate-900">Send</button>
+                      <button type="button" onClick={() => setUssd(null)} className="rounded bg-red-800 px-2 font-bold text-slate-900">
                         ✕
                       </button>
                     </form>
@@ -164,17 +164,17 @@ export default function PhoneSim({ presets, ussdCode, shortcode, exampleLandmark
               void sendSms(text);
             }}
           >
-            <input data-testid="sim-input" value={text} onChange={(e) => setText(e.target.value)} placeholder={`SMS to ${shortcode}`} className="min-w-0 flex-1 rounded-lg bg-slate-950 px-3 py-2 text-sm" />
+            <input data-testid="sim-input" value={text} onChange={(e) => setText(e.target.value)} placeholder={`SMS to ${shortcode}`} className="min-w-0 flex-1 rounded-lg bg-white px-3 py-2 text-sm" />
             <button data-testid="sim-send" disabled={sending} className="rounded-lg bg-green-600 px-3 font-bold">
               Send
             </button>
           </form>
         )}
         <div className="mt-3 grid grid-cols-2 gap-2">
-          <button onClick={() => setMode("sms")} className={`rounded-full py-2 text-sm font-bold ${mode === "sms" ? "bg-sky-600" : "bg-slate-700"}`}>
+          <button onClick={() => setMode("sms")} className={`rounded-full py-2 text-sm font-bold ${mode === "sms" ? "bg-sky-600" : "bg-slate-300"}`}>
             ✉ SMS
           </button>
-          <button onClick={() => setMode("ussd")} className={`rounded-full py-2 text-sm font-bold ${mode === "ussd" ? "bg-sky-600" : "bg-slate-700"}`} data-testid="mode-ussd">
+          <button onClick={() => setMode("ussd")} className={`rounded-full py-2 text-sm font-bold ${mode === "ussd" ? "bg-sky-600" : "bg-slate-300"}`} data-testid="mode-ussd">
             # USSD
           </button>
         </div>
@@ -183,7 +183,7 @@ export default function PhoneSim({ presets, ussdCode, shortcode, exampleLandmark
       {mode === "sms" && (
         <div className="flex max-w-sm flex-wrap justify-center gap-2">
           {QUICK.map((q) => (
-            <button key={q} onClick={() => void sendSms(q)} className="rounded-full border border-slate-700 px-3 py-1 text-xs hover:bg-slate-800">
+            <button key={q} onClick={() => void sendSms(q)} className="rounded-full border border-slate-200 px-3 py-1 text-xs hover:bg-slate-100">
               {q}
             </button>
           ))}

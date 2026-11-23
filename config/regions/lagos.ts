@@ -233,6 +233,9 @@ export const lagos: RegionConfig = {
     { id: "sh-ikoyi-hall", name: "Ikoyi Community Hall", location: [3.432, 6.452], capacity: 250, occupancy: 20, contactPhone: "+2348003000103" },
     { id: "sh-festac-hall", name: "Festac Town Hall", location: [3.284, 6.469], capacity: 300, occupancy: 35, contactPhone: "+2348003000104" },
     { id: "sh-ajah-centre", name: "Ajah Community Centre", location: [3.562, 6.471], capacity: 300, occupancy: 25, contactPhone: "+2348003000105" },
+    { id: "hp-lagos-island", name: "Lagos Island General Hospital", type: "hospital", location: [3.389, 6.452], capacity: 120, occupancy: 70, contactPhone: "+2348003000201", email: "lagos-island-gh@example.com" },
+    { id: "hp-surulere", name: "Surulere General Hospital", type: "hospital", location: [3.356, 6.503], capacity: 90, occupancy: 50, contactPhone: "+2348003000202", email: "surulere-gh@example.com" },
+    { id: "hp-ajah-phc", name: "Ajah Primary Health Centre", type: "hospital", location: [3.571, 6.466], capacity: 40, occupancy: 15, contactPhone: "+2348003000203", email: "ajah-phc@example.com" },
   ],
   volunteers: [
     // The presenter's account (log in at /volunteer with this phone, OTP 123456 in demo mode).

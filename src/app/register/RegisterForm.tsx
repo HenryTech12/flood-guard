@@ -77,7 +77,7 @@ export default function RegisterForm() {
         <Select label="Area" value={f.zoneId} onChange={(v) => (set("zoneId", v), set("landmarkId", ""))} options={[["", "Choose…"], ...zones.map((z) => [z.id, z.name] as [string, string])]} required />
       </div>
 
-      <fieldset className="rounded-xl border border-slate-800 p-4">
+      <fieldset className="rounded-xl border border-slate-200 p-4">
         <legend className="px-1 text-sm font-bold">Home location (optional, helps rescuers find you)</legend>
         <label className="flex items-center gap-2 text-sm">
           <input type="checkbox" checked={f.shareLocation} onChange={(e) => set("shareLocation", e.target.checked)} /> Store my home location for rescue
@@ -86,11 +86,11 @@ export default function RegisterForm() {
           <div className="mt-2 grid gap-3 sm:grid-cols-2">
             <Select label="Nearest landmark" value={f.landmarkId} onChange={(v) => set("landmarkId", v)} options={[["", "Choose…"], ...(zone?.landmarks.map((l) => [l.id, l.name] as [string, string]) ?? [])]} />
             <div>
-              <div className="text-sm text-slate-400">or use this phone&apos;s GPS (stand at home)</div>
+              <div className="text-sm text-slate-600">or use this phone&apos;s GPS (stand at home)</div>
               <button
                 type="button"
                 onClick={() => navigator.geolocation?.getCurrentPosition((p) => setGps([p.coords.longitude, p.coords.latitude]), () => setMsg({ ok: false, text: "Could not get GPS" }))}
-                className="mt-1 rounded-lg bg-slate-800 px-3 py-2 text-sm"
+                className="mt-1 rounded-lg bg-slate-100 px-3 py-2 text-sm"
               >
                 {gps ? `📍 ${gps[1].toFixed(4)}, ${gps[0].toFixed(4)}` : "Use GPS"}
               </button>
@@ -99,7 +99,7 @@ export default function RegisterForm() {
         )}
       </fieldset>
 
-      <fieldset className="rounded-xl border border-slate-800 p-4">
+      <fieldset className="rounded-xl border border-slate-200 p-4">
         <legend className="px-1 text-sm font-bold">People needing extra help</legend>
         <div className="space-y-2">
           {VULN.map(([type, label]) => (
@@ -109,8 +109,8 @@ export default function RegisterForm() {
               </label>
               {vuln[type] && (
                 <>
-                  <input type="number" min={1} max={20} value={vuln[type]!.count} onChange={(e) => setVuln((v) => ({ ...v, [type]: { ...v[type]!, count: Number(e.target.value) } }))} className="w-16 rounded bg-slate-800 px-2 py-1" />
-                  <input placeholder="notes (e.g. wheelchair)" value={vuln[type]!.notes} onChange={(e) => setVuln((v) => ({ ...v, [type]: { ...v[type]!, notes: e.target.value } }))} className="flex-1 rounded bg-slate-800 px-2 py-1 text-sm" />
+                  <input type="number" min={1} max={20} value={vuln[type]!.count} onChange={(e) => setVuln((v) => ({ ...v, [type]: { ...v[type]!, count: Number(e.target.value) } }))} className="w-16 rounded bg-slate-100 px-2 py-1" />
+                  <input placeholder="notes (e.g. wheelchair)" value={vuln[type]!.notes} onChange={(e) => setVuln((v) => ({ ...v, [type]: { ...v[type]!, notes: e.target.value } }))} className="flex-1 rounded bg-slate-100 px-2 py-1 text-sm" />
                 </>
               )}
             </div>
@@ -118,13 +118,13 @@ export default function RegisterForm() {
         </div>
       </fieldset>
 
-      <fieldset className="rounded-xl border border-slate-800 p-4">
+      <fieldset className="rounded-xl border border-slate-200 p-4">
         <legend className="px-1 text-sm font-bold">Family to tell when you are safe (up to 3)</legend>
         {family.map((x, i) => (
           <div key={i} className="mb-2 flex gap-2">
-            <input placeholder="Phone" value={x.phone} onChange={(e) => setFamily((fm) => fm.map((y, j) => (j === i ? { ...y, phone: e.target.value } : y)))} className="min-w-0 flex-1 rounded bg-slate-800 px-2 py-2" />
-            <input placeholder="Name" value={x.name} onChange={(e) => setFamily((fm) => fm.map((y, j) => (j === i ? { ...y, name: e.target.value } : y)))} className="min-w-0 flex-1 rounded bg-slate-800 px-2 py-2" />
-            <input placeholder="Email (optional)" type="email" value={x.email} onChange={(e) => setFamily((fm) => fm.map((y, j) => (j === i ? { ...y, email: e.target.value } : y)))} className="min-w-0 flex-1 rounded bg-slate-800 px-2 py-2" />
+            <input placeholder="Phone" value={x.phone} onChange={(e) => setFamily((fm) => fm.map((y, j) => (j === i ? { ...y, phone: e.target.value } : y)))} className="min-w-0 flex-1 rounded bg-slate-100 px-2 py-2" />
+            <input placeholder="Name" value={x.name} onChange={(e) => setFamily((fm) => fm.map((y, j) => (j === i ? { ...y, name: e.target.value } : y)))} className="min-w-0 flex-1 rounded bg-slate-100 px-2 py-2" />
+            <input placeholder="Email (optional)" type="email" value={x.email} onChange={(e) => setFamily((fm) => fm.map((y, j) => (j === i ? { ...y, email: e.target.value } : y)))} className="min-w-0 flex-1 rounded bg-slate-100 px-2 py-2" />
           </div>
         ))}
         {family.length < 3 && (
@@ -155,8 +155,8 @@ export default function RegisterForm() {
 function Input({ label, value, onChange, placeholder, required }: { label: string; value: string; onChange: (v: string) => void; placeholder?: string; required?: boolean }) {
   return (
     <label className="block">
-      <span className="text-sm text-slate-400">{label}</span>
-      <input value={value} onChange={(e) => onChange(e.target.value)} placeholder={placeholder} required={required} className="mt-1 w-full rounded-lg border border-slate-700 bg-slate-950 px-3 py-2" />
+      <span className="text-sm text-slate-600">{label}</span>
+      <input value={value} onChange={(e) => onChange(e.target.value)} placeholder={placeholder} required={required} className="mt-1 w-full rounded-lg border border-slate-200 bg-white px-3 py-2" />
     </label>
   );
 }
@@ -164,8 +164,8 @@ function Input({ label, value, onChange, placeholder, required }: { label: strin
 function Select({ label, value, onChange, options, required }: { label: string; value: string; onChange: (v: string) => void; options: (readonly [string, string])[]; required?: boolean }) {
   return (
     <label className="block">
-      <span className="text-sm text-slate-400">{label}</span>
-      <select value={value} onChange={(e) => onChange(e.target.value)} required={required} className="mt-1 w-full rounded-lg border border-slate-700 bg-slate-950 px-3 py-2">
+      <span className="text-sm text-slate-600">{label}</span>
+      <select value={value} onChange={(e) => onChange(e.target.value)} required={required} className="mt-1 w-full rounded-lg border border-slate-200 bg-white px-3 py-2">
         {options.map(([v, l]) => (
           <option key={v} value={v}>
             {l}

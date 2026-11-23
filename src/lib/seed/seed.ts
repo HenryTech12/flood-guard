@@ -74,7 +74,7 @@ export async function seedDatabase(sql: Sql, region: RegionConfig, opts: SeedOpt
 
   await sql.begin(async (tx) => {
     await tx.unsafe(`
-      truncate table audit_log, outbound_messages, inbound_messages, alert_deliveries, alerts, checkins, crowd_reports,
+      truncate table flood_events, voice_recordings, audit_log, outbound_messages, inbound_messages, alert_deliveries, alerts, checkins, crowd_reports,
         volunteer_positions, rescue_jobs, help_requests, shelters, volunteers, family_contacts, vulnerable_members,
         residents, zone_risk_snapshots, rainfall_readings, flood_extents, landmarks, zones, otp_codes, app_users
       restart identity cascade;
@@ -129,8 +129,8 @@ export async function seedDatabase(sql: Sql, region: RegionConfig, opts: SeedOpt
 
     // Shelters
     for (const s of region.shelters) {
-      await tx`insert into shelters (id, name, geom, capacity, current_occupancy, initial_occupancy, contact_phone)
-               values (${s.id}, ${s.name}, ST_SetSRID(ST_MakePoint(${s.location[0]}, ${s.location[1]}), 4326), ${s.capacity}, ${s.occupancy}, ${s.occupancy}, ${s.contactPhone})`;
+      await tx`insert into shelters (id, name, type, email, geom, capacity, current_occupancy, initial_occupancy, contact_phone)
+               values (${s.id}, ${s.name}, ${s.type ?? "shelter"}, ${s.email ?? null}, ST_SetSRID(ST_MakePoint(${s.location[0]}, ${s.location[1]}), 4326), ${s.capacity}, ${s.occupancy}, ${s.occupancy}, ${s.contactPhone})`;
     }
 
     // Volunteers

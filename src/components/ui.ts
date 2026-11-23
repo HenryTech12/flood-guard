@@ -26,8 +26,8 @@ export const STATUS_CLASS: Record<string, string> = {
   assigned: "bg-sky-500/20 text-sky-700",
   en_route: "bg-yellow-500/20 text-yellow-700",
   rescued: "bg-green-500/20 text-green-700",
-  cancelled: "bg-slate-600/30 text-slate-300",
-  duplicate: "bg-slate-600/30 text-slate-300",
+  cancelled: "bg-slate-400/30 text-slate-700",
+  duplicate: "bg-slate-400/30 text-slate-700",
 };
 
 export const VOL_ICON: Record<VolunteerType, string> = { boat: "🚤", vehicle: "🚙", on_foot: "🚶", medical: "⛑️" };

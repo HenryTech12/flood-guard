@@ -218,7 +218,7 @@ export async function completeJob(
   });
 
   const r = await requestContact(sql, requestId);
-  if (outcome === "rescued" && r) await notifyRescued(sql, r);
+  if (outcome === "rescued" && r) await notifyRescuedContact(sql, r);
   if (outcome === "could_not_reach") {
     const { recomputeUrgency } = await import("./helpRequests");
     await recomputeUrgency(sql, [requestId]);
@@ -228,7 +228,13 @@ export async function completeJob(
   return requestId;
 }
 
-async function notifyRescued(sql: Sql, r: NonNullable<Awaited<ReturnType<typeof requestContact>>>) {
+/** Tell the resident and their family that the person is safe (used by the authority dashboard too). */
+export async function notifyRescued(sql: Sql, requestId: string) {
+  const r = await requestContact(sql, requestId);
+  if (r) await notifyRescuedContact(sql, r);
+}
+
+async function notifyRescuedContact(sql: Sql, r: NonNullable<Awaited<ReturnType<typeof requestContact>>>) {
   const [sh] = await nearestShelters(sql, [r.lng, r.lat], { needSpace: r.people_count, limit: 1 });
   const shelterText = sh ? `${sh.name} (${formatDistance(sh.distanceM ?? 0)}, tel ${sh.phone})` : "ask your rescuer";
   const msgs: Parameters<typeof sendNow>[1] = [

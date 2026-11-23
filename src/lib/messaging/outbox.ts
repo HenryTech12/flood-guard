@@ -2,6 +2,7 @@
 // through here so nothing is lost when the provider hiccups and every message is visible
 // in the demo log.
 import type { Db, Sql } from "../db/client";
+import { isValidPhone } from "../core/phone";
 import { getEmailProvider } from "./email";
 import { getProvider } from "./provider";
 
@@ -22,7 +23,9 @@ export interface OutboundMessage {
 
 export const MAX_ATTEMPTS = 5;
 
-export async function enqueue(db: Db, msgs: OutboundMessage[]): Promise<number[]> {
+export async function enqueue(db: Db, all: OutboundMessage[]): Promise<number[]> {
+  // Web reports without a phone get a placeholder id ("web-…"): never try to SMS/call those.
+  const msgs = all.filter((m) => m.channel === "email" || isValidPhone(m.to));
   if (!msgs.length) return [];
   const rows = msgs.map((m) => ({
     channel: m.channel,

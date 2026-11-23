@@ -91,7 +91,7 @@ export default function CommandApp({ operatorName, demo }: { operatorName: strin
     if (error === "unauthorized") window.location.assign("/login?next=/command");
   }, [error]);
   if (error === "unauthorized") return null;
-  if (!view) return <div className="grid h-screen place-items-center text-xl text-slate-400">Connecting to FloodGuard…</div>;
+  if (!view) return <div className="grid h-screen place-items-center text-xl text-slate-600">Connecting to FloodGuard…</div>;
 
   const open = view.requests.filter((r) => ["new", "assigned", "en_route"].includes(r.status)).sort((a, b) => b.urgency - a.urgency || a.createdAt.localeCompare(b.createdAt));
   const closed = view.requests.filter((r) => !["new", "assigned", "en_route"].includes(r.status)).sort((a, b) => b.updatedAt.localeCompare(a.updatedAt));
@@ -127,7 +127,7 @@ export default function CommandApp({ operatorName, demo }: { operatorName: strin
   const routeFrom = async (p: LngLat) => onPick(p);
 
   return (
-    <div className="fixed inset-0 overflow-hidden bg-slate-950 text-slate-100">
+    <div className="fixed inset-0 overflow-hidden bg-white text-slate-900">
       <MapView
         view={view}
         layers={layers}
@@ -144,19 +144,19 @@ export default function CommandApp({ operatorName, demo }: { operatorName: strin
       />
 
       {/* ---------- top bar ---------- */}
-      <header className="absolute inset-x-0 top-0 z-10 flex h-16 items-center gap-4 border-b border-slate-800 bg-slate-950/90 px-4 backdrop-blur">
+      <header className="absolute inset-x-0 top-0 z-10 flex h-16 items-center gap-4 border-b border-slate-200 bg-white/90 px-4 backdrop-blur">
         <Link href="/" className="flex items-center gap-2">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src="/icon.svg" alt="" className="h-9 w-9" />
           <div className="leading-tight">
             <div className="text-xl font-black tracking-tight">FloodGuard</div>
-            <div className="text-xs text-slate-400">
+            <div className="text-xs text-slate-600">
               {view.region.name}
               {view.region.state !== view.region.name ? `, ${view.region.state}` : ""} · Command
             </div>
           </div>
         </Link>
-        <div className="flex items-center gap-2 rounded-full border border-slate-700 px-3 py-1 text-sm" title={`Live updates via ${transport}`}>
+        <div className="flex items-center gap-2 rounded-full border border-slate-200 px-3 py-1 text-sm" title={`Live updates via ${transport}`}>
           <span className={`h-2.5 w-2.5 rounded-full ${tPos !== null ? "bg-sky-500" : transport === "polling" || transport === "connecting" ? "bg-yellow-400" : "animate-pulse bg-green-400"}`} />
           {tPos !== null ? "REPLAY" : "LIVE"} <span className="text-slate-500">{tPos === null && transport}</span>
         </div>
@@ -173,7 +173,7 @@ export default function CommandApp({ operatorName, demo }: { operatorName: strin
           <Stat label="Avg to accept" value={s.avgAcceptSec !== null ? `${Math.round(s.avgAcceptSec)}s` : "—"} color="text-sky-700" />
           <Stat label="Avg to rescue" value={s.avgRescueMin !== null ? `${s.avgRescueMin.toFixed(1)}m` : "—"} color="text-sky-700" />
         </div>
-        <div className="ml-2 text-right text-xs text-slate-400">
+        <div className="ml-2 text-right text-xs text-slate-600">
           <div>{operatorName}</div>
           <div className="flex gap-2">
             {demo && (
@@ -181,7 +181,7 @@ export default function CommandApp({ operatorName, demo }: { operatorName: strin
                 Demo panel
               </Link>
             )}
-            <button className="hover:text-slate-200" onClick={() => fetch("/api/auth/logout?who=operator", { method: "POST" }).then(() => (window.location.href = "/login"))}>
+            <button className="hover:text-slate-800" onClick={() => fetch("/api/auth/logout?who=operator", { method: "POST" }).then(() => (window.location.href = "/login"))}>
               Sign out
             </button>
           </div>
@@ -193,7 +193,7 @@ export default function CommandApp({ operatorName, demo }: { operatorName: strin
         <Card title="Layers">
           <div className="grid grid-cols-1 gap-1">
             {LAYER_LABELS.map(([k, label, color]) => (
-              <label key={k} className="flex cursor-pointer items-center gap-2 rounded px-1 py-0.5 text-[15px] hover:bg-slate-800/60">
+              <label key={k} className="flex cursor-pointer items-center gap-2 rounded px-1 py-0.5 text-[15px] hover:bg-slate-100/60">
                 <input type="checkbox" checked={layers[k]} onChange={(e) => setLayers({ ...layers, [k]: e.target.checked })} className="h-4 w-4 accent-sky-500" />
                 <span className="h-3 w-3 rounded-sm" style={{ background: color }} />
                 {label}
@@ -208,19 +208,19 @@ export default function CommandApp({ operatorName, demo }: { operatorName: strin
 
         <Card title="Safe route">
           <div className="flex gap-2">
-            <button onClick={() => setPickMode((p) => !p)} className={`flex-1 rounded-lg px-3 py-2 text-sm font-bold ${pickMode ? "bg-emerald-500 text-[#08203f]" : "bg-slate-800 hover:bg-slate-700"}`}>
+            <button onClick={() => setPickMode((p) => !p)} className={`flex-1 rounded-lg px-3 py-2 text-sm font-bold ${pickMode ? "bg-emerald-500 text-[#08203f]" : "bg-slate-100 hover:bg-slate-300"}`}>
               {pickMode ? "Click a point on the map…" : "Pick start point"}
             </button>
             {route && (
-              <button onClick={() => setRoute(null)} className="rounded-lg bg-slate-800 px-3 py-2 text-sm hover:bg-slate-700">
+              <button onClick={() => setRoute(null)} className="rounded-lg bg-slate-100 px-3 py-2 text-sm hover:bg-slate-300">
                 Clear
               </button>
             )}
           </div>
           {route && (
             <div className="mt-2 text-sm">
-              <div className="font-bold text-emerald-700">→ {route.shelter?.name ?? "no shelter"} {route.shelter && <span className="font-normal text-slate-400">({route.shelter.space} spaces)</span>}</div>
-              <div className="text-slate-400">
+              <div className="font-bold text-emerald-700">→ {route.shelter?.name ?? "no shelter"} {route.shelter && <span className="font-normal text-slate-600">({route.shelter.space} spaces)</span>}</div>
+              <div className="text-slate-600">
                 {route.distanceM !== null && formatDistance(route.distanceM)} · {route.method === "openrouteservice" ? `~${route.durationMin} min, avoids flood` : "straight-line guide"}
               </div>
               {route.warnings.map((w) => (
@@ -244,8 +244,8 @@ export default function CommandApp({ operatorName, demo }: { operatorName: strin
       </aside>
 
       {/* ---------- right column ---------- */}
-      <aside className="absolute bottom-24 right-3 top-20 z-10 flex w-[420px] flex-col overflow-hidden rounded-xl border border-slate-800 bg-slate-950/90 backdrop-blur">
-        <div className="flex border-b border-slate-800 text-[15px] font-bold">
+      <aside className="absolute bottom-24 right-3 top-20 z-10 flex w-[420px] flex-col overflow-hidden rounded-xl border border-slate-200 bg-white/90 backdrop-blur">
+        <div className="flex border-b border-slate-200 text-[15px] font-bold">
           {(
             [
               ["queue", `Queue (${open.length})`],
@@ -253,7 +253,7 @@ export default function CommandApp({ operatorName, demo }: { operatorName: strin
               ["alerts", "Alerts"],
             ] as const
           ).map(([k, label]) => (
-            <button key={k} onClick={() => setTab(k)} className={`flex-1 px-3 py-3 ${tab === k ? "border-b-2 border-sky-400 text-sky-700" : "text-slate-400 hover:text-slate-200"}`}>
+            <button key={k} onClick={() => setTab(k)} className={`flex-1 px-3 py-3 ${tab === k ? "border-b-2 border-sky-400 text-sky-700" : "text-slate-600 hover:text-slate-800"}`}>
               {label}
             </button>
           ))}
@@ -274,7 +274,7 @@ export default function CommandApp({ operatorName, demo }: { operatorName: strin
                   <div className="mb-1 mt-4 text-xs font-bold uppercase tracking-wider text-slate-500">Closed (24h)</div>
                   <div className="space-y-1">
                     {closed.slice(0, 30).map((r) => (
-                      <button key={r.id} onClick={() => selectRequest(r.id)} className="flex w-full items-center justify-between rounded-lg px-2 py-1.5 text-left text-sm hover:bg-slate-800/60" data-testid={`closed-${r.ref}`}>
+                      <button key={r.id} onClick={() => selectRequest(r.id)} className="flex w-full items-center justify-between rounded-lg px-2 py-1.5 text-left text-sm hover:bg-slate-100/60" data-testid={`closed-${r.ref}`}>
                         <span className="font-mono font-bold">{r.ref}</span>
                         <span className={`rounded px-2 py-0.5 text-xs ${STATUS_CLASS[r.status]}`}>{STATUS_LABEL[r.status]}</span>
                         <span className="text-xs text-slate-500">{r.rescuedAt ? `in ${ago(r.createdAt, Date.parse(r.rescuedAt))}` : r.closeReason ?? ""}</span>
@@ -289,15 +289,15 @@ export default function CommandApp({ operatorName, demo }: { operatorName: strin
           {tab === "zones" && (
             <div className="space-y-2">
               {zonesSorted.map((z) => (
-                <div key={z.id} className={`rounded-xl border p-3 ${z.id === zoneSel ? "border-sky-500 bg-slate-900" : "border-slate-800 bg-slate-900/60"}`} onClick={() => setZoneSel(z.id)} data-testid={`zone-${z.id}`}>
+                <div key={z.id} className={`rounded-xl border p-3 ${z.id === zoneSel ? "border-sky-500 bg-slate-50" : "border-slate-200 bg-slate-50/60"}`} onClick={() => setZoneSel(z.id)} data-testid={`zone-${z.id}`}>
                   <div className="flex items-center justify-between">
                     <div className="text-lg font-bold">{z.name}</div>
                     <span className={`rounded border px-2 py-0.5 text-sm font-black ${LEVEL_BG[z.level]}`}>{z.level.toUpperCase()}</span>
                   </div>
-                  <div className="mt-1 h-1.5 overflow-hidden rounded bg-slate-800">
+                  <div className="mt-1 h-1.5 overflow-hidden rounded bg-slate-100">
                     <div className="h-full transition-all duration-700" style={{ width: `${Math.round(z.score * 100)}%`, background: LEVEL_COLOR[z.level] }} />
                   </div>
-                  <ul className="mt-2 space-y-0.5 text-sm text-slate-300">
+                  <ul className="mt-2 space-y-0.5 text-sm text-slate-700">
                     {z.reasons.map((x) => (
                       <li key={x}>• {x}</li>
                     ))}
@@ -320,7 +320,7 @@ export default function CommandApp({ operatorName, demo }: { operatorName: strin
                         Send alerts
                       </button>
                       <button
-                        className="rounded-lg bg-slate-700 px-3 py-1.5 text-sm font-bold hover:bg-slate-600"
+                        className="rounded-lg bg-slate-300 px-3 py-1.5 text-sm font-bold hover:bg-slate-400"
                         onClick={async (e) => {
                           e.stopPropagation();
                           const r = await fetch(`/api/operator/zones/${z.id}`).then((x) => x.json());
@@ -330,11 +330,11 @@ export default function CommandApp({ operatorName, demo }: { operatorName: strin
                         📻 Radio script
                       </button>
                       {z.override ? (
-                        <button className="rounded-lg bg-slate-800 px-3 py-1.5 text-sm hover:bg-slate-700" onClick={(e) => (e.stopPropagation(), void act(() => postJson(`/api/operator/zones/${z.id}`, { action: "clear_override" }), "Override cleared"))}>
+                        <button className="rounded-lg bg-slate-100 px-3 py-1.5 text-sm hover:bg-slate-300" onClick={(e) => (e.stopPropagation(), void act(() => postJson(`/api/operator/zones/${z.id}`, { action: "clear_override" }), "Override cleared"))}>
                           Clear override
                         </button>
                       ) : (
-                        <button className="rounded-lg bg-slate-800 px-3 py-1.5 text-sm hover:bg-slate-700" onClick={(e) => (e.stopPropagation(), void act(() => postJson(`/api/operator/zones/${z.id}`, { action: "override", level: "high" }), "Zone raised to HIGH"))}>
+                        <button className="rounded-lg bg-slate-100 px-3 py-1.5 text-sm hover:bg-slate-300" onClick={(e) => (e.stopPropagation(), void act(() => postJson(`/api/operator/zones/${z.id}`, { action: "override", level: "high" }), "Zone raised to HIGH"))}>
                           Raise to HIGH
                         </button>
                       )}
@@ -348,7 +348,7 @@ export default function CommandApp({ operatorName, demo }: { operatorName: strin
 
           {tab === "alerts" && (
             <div className="space-y-2 text-sm">
-              <div className="rounded-lg border border-slate-800 bg-slate-900/60 p-3">
+              <div className="rounded-lg border border-slate-200 bg-slate-50/60 p-3">
                 <div className="mb-1 font-bold">Language templates</div>
                 {Object.entries(view.languageStatus).map(([l, st]) => (
                   <div key={l} className="flex justify-between">
@@ -359,14 +359,14 @@ export default function CommandApp({ operatorName, demo }: { operatorName: strin
               </div>
               {view.alerts.length === 0 && <div className="py-6 text-center text-slate-500">No alerts sent yet.</div>}
               {view.alerts.map((a) => (
-                <div key={a.id} className="flex items-center justify-between rounded-lg border border-slate-800 px-3 py-2">
+                <div key={a.id} className="flex items-center justify-between rounded-lg border border-slate-200 px-3 py-2">
                   <div>
                     <span className={`mr-2 rounded border px-1.5 text-xs font-bold ${LEVEL_BG[(a.level as "low") ?? "low"] ?? ""}`}>{a.level.toUpperCase()}</span>
                     <b>{view.zones.find((z) => z.id === a.zoneId)?.shortName}</b> · {a.channel === "radio_script" ? "📻 radio script" : a.channel === "voice" ? "📞 voice" : "✉ SMS"} · {a.language.toUpperCase()}
                     {a.fallbackFrom && <span className="ml-1 text-xs text-red-700">(sent in English)</span>}
                   </div>
-                  <div className="text-right text-xs text-slate-400">
-                    {a.channel !== "radio_script" && <div className="font-bold text-slate-200">{a.sentCount} sent</div>}
+                  <div className="text-right text-xs text-slate-600">
+                    {a.channel !== "radio_script" && <div className="font-bold text-slate-800">{a.sentCount} sent</div>}
                     {new Date(a.createdAt).toLocaleTimeString()}
                   </div>
                 </div>
@@ -377,13 +377,13 @@ export default function CommandApp({ operatorName, demo }: { operatorName: strin
       </aside>
 
       {/* ---------- timeline ---------- */}
-      <footer className="absolute inset-x-3 bottom-3 z-10 flex h-[72px] items-center gap-4 rounded-xl border border-slate-800 bg-slate-950/90 px-4 backdrop-blur">
+      <footer className="absolute inset-x-3 bottom-3 z-10 flex h-[72px] items-center gap-4 rounded-xl border border-slate-200 bg-white/90 px-4 backdrop-blur">
         <button
           onClick={() => {
             if (tPos === null) setTPos(0);
             setPlaying((p) => !p);
           }}
-          className="rounded-lg bg-slate-800 px-3 py-2 text-lg hover:bg-slate-700"
+          className="rounded-lg bg-slate-100 px-3 py-2 text-lg hover:bg-slate-300"
           title="Replay the event"
         >
           {playing ? "⏸" : "▶"}
@@ -401,27 +401,27 @@ export default function CommandApp({ operatorName, demo }: { operatorName: strin
             className="w-full accent-sky-500"
             aria-label="Timeline"
           />
-          <div className="flex justify-between text-xs text-slate-400">
+          <div className="flex justify-between text-xs text-slate-600">
             <span>Event start {new Date(view.demo.demoStartedAt).toLocaleTimeString()}</span>
-            <span className="font-bold text-slate-200">{tIso ? `Showing ${new Date(tIso).toLocaleTimeString()}` : "Live"}</span>
+            <span className="font-bold text-slate-800">{tIso ? `Showing ${new Date(tIso).toLocaleTimeString()}` : "Live"}</span>
             <span>Now</span>
           </div>
         </div>
-        <button onClick={() => (setTPos(null), setPlaying(false))} className={`rounded-lg px-4 py-2 font-black ${tPos === null ? "bg-green-600 text-slate-50" : "bg-slate-800 text-green-700 hover:bg-slate-700"}`}>
+        <button onClick={() => (setTPos(null), setPlaying(false))} className={`rounded-lg px-4 py-2 font-black ${tPos === null ? "bg-green-600 text-slate-900" : "bg-slate-100 text-green-700 hover:bg-slate-300"}`}>
           LIVE
         </button>
       </footer>
 
       {radio && (
         <div className="absolute inset-0 z-30 grid place-items-center bg-black/60" onClick={() => setRadio(null)}>
-          <div className="w-[640px] max-w-[95vw] rounded-2xl border border-slate-700 bg-slate-900 p-5" onClick={(e) => e.stopPropagation()}>
+          <div className="w-[640px] max-w-[95vw] rounded-2xl border border-slate-200 bg-slate-50 p-5" onClick={(e) => e.stopPropagation()}>
             <div className="mb-2 flex items-center justify-between">
               <div className="text-lg font-bold">📻 Community radio script — {radio.zone}</div>
-              <button onClick={() => setRadio(null)} className="text-slate-400 hover:text-slate-50">
+              <button onClick={() => setRadio(null)} className="text-slate-600 hover:text-slate-900">
                 ✕
               </button>
             </div>
-            <textarea readOnly value={radio.text} className="h-80 w-full rounded-lg bg-slate-950 p-3 font-mono text-sm text-slate-200" />
+            <textarea readOnly value={radio.text} className="h-80 w-full rounded-lg bg-white p-3 font-mono text-sm text-slate-800" />
             <button onClick={() => void navigator.clipboard.writeText(radio.text).then(() => setToast("Copied"))} className="mt-2 rounded-lg bg-sky-600 px-4 py-2 font-bold hover:bg-sky-500">
               Copy for radio station
             </button>
@@ -429,26 +429,26 @@ export default function CommandApp({ operatorName, demo }: { operatorName: strin
         </div>
       )}
 
-      {toast && <div className="absolute left-1/2 top-20 z-40 -translate-x-1/2 rounded-xl border border-slate-600 bg-slate-900 px-5 py-3 text-lg shadow-2xl">{toast}</div>}
+      {toast && <div className="absolute left-1/2 top-20 z-40 -translate-x-1/2 rounded-xl border border-slate-400 bg-slate-50 px-5 py-3 text-lg shadow-2xl">{toast}</div>}
     </div>
   );
 }
 
 function Stat({ label, value, color, testid }: { label: string; value: number | string; color: string; testid?: string }) {
   return (
-    <div className="min-w-[78px] rounded-lg border border-slate-800 bg-slate-900/80 px-3 py-1 text-center">
+    <div className="min-w-[78px] rounded-lg border border-slate-200 bg-slate-50/80 px-3 py-1 text-center">
       <div className={`text-2xl font-black leading-none ${color}`} data-testid={testid}>
         {value}
       </div>
-      <div className="text-[11px] uppercase tracking-wide text-slate-400">{label}</div>
+      <div className="text-[11px] uppercase tracking-wide text-slate-600">{label}</div>
     </div>
   );
 }
 
 function Card({ title, children }: { title: string; children: React.ReactNode }) {
   return (
-    <section className="rounded-xl border border-slate-800 bg-slate-950/90 p-3 backdrop-blur">
-      <div className="mb-2 text-xs font-bold uppercase tracking-wider text-slate-400">{title}</div>
+    <section className="rounded-xl border border-slate-200 bg-white/90 p-3 backdrop-blur">
+      <div className="mb-2 text-xs font-bold uppercase tracking-wider text-slate-600">{title}</div>
       {children}
     </section>
   );
@@ -457,7 +457,7 @@ function Card({ title, children }: { title: string; children: React.ReactNode })
 function QueueRow({ r, now, selected, onClick, vol, zoneName }: { r: RequestState; now: number; selected: boolean; onClick: () => void; vol?: LiveState["volunteers"][number]; zoneName: string }) {
   const src = SOURCE_LABEL[r.locationSource];
   return (
-    <button onClick={onClick} className={`w-full rounded-xl border p-3 text-left transition ${selected ? "border-sky-500 bg-slate-800" : "border-slate-800 bg-slate-900/70 hover:border-slate-600"}`} data-testid={`req-${r.ref}`}>
+    <button onClick={onClick} className={`w-full rounded-xl border p-3 text-left transition ${selected ? "border-sky-500 bg-slate-100" : "border-slate-200 bg-slate-50/70 hover:border-slate-400"}`} data-testid={`req-${r.ref}`}>
       <div className="flex items-center gap-3">
         <div className="grid h-12 w-12 shrink-0 place-items-center rounded-lg text-xl font-black text-[#08203f]" style={{ background: urgencyColor(r.urgency) }} title="Urgency score">
           {r.urgency}
@@ -467,9 +467,9 @@ function QueueRow({ r, now, selected, onClick, vol, zoneName }: { r: RequestStat
             <span className="font-mono text-lg font-bold">{r.ref}</span>
             {r.vulnerableFlag && <span title="Vulnerable household">💗</span>}
             <span className={`rounded px-2 py-0.5 text-xs font-bold ${STATUS_CLASS[r.status]}`}>{r.status === "new" && r.offer ? "Offered" : STATUS_LABEL[r.status]}</span>
-            <span className="ml-auto text-sm tabular-nums text-slate-400">{ago(r.createdAt, now)}</span>
+            <span className="ml-auto text-sm tabular-nums text-slate-600">{ago(r.createdAt, now)}</span>
           </div>
-          <div className="truncate text-sm text-slate-300">
+          <div className="truncate text-sm text-slate-700">
             👥 {r.people} · {r.landmark ?? zoneName} · <span className={src?.cls}>{src?.label}</span>
             {vol && (
               <span className="text-sky-700">
@@ -497,15 +497,15 @@ function RequestDetail({ r, view, now, onClose, act, routeFrom }: { r: RequestSt
   useEffect(() => setPhone(null), [r.id]);
 
   return (
-    <div className="mb-3 rounded-xl border border-sky-300 bg-slate-900 p-4" data-testid="request-detail">
+    <div className="mb-3 rounded-xl border border-sky-300 bg-slate-50 p-4" data-testid="request-detail">
       <div className="flex items-start justify-between">
         <div>
           <div className="font-mono text-2xl font-black">{r.ref}</div>
-          <div className="text-slate-400">
+          <div className="text-slate-600">
             {zoneName} · via {r.channel.toUpperCase()} · {ago(r.createdAt, now)} ago{r.mergedCount ? ` · ${r.mergedCount} follow-up msg` : ""}
           </div>
         </div>
-        <button onClick={onClose} className="text-slate-500 hover:text-slate-50">
+        <button onClick={onClose} className="text-slate-500 hover:text-slate-900">
           ✕
         </button>
       </div>
@@ -513,9 +513,9 @@ function RequestDetail({ r, view, now, onClose, act, routeFrom }: { r: RequestSt
         <span className={`rounded px-2 py-1 text-sm font-bold ${STATUS_CLASS[r.status]}`} data-testid="detail-status">
           {STATUS_LABEL[r.status]}
         </span>
-        <span className="rounded bg-slate-800 px-2 py-1 text-sm">👥 {r.people} people</span>
+        <span className="rounded bg-slate-100 px-2 py-1 text-sm">👥 {r.people} people</span>
         {r.insideFlood && <span className="rounded bg-blue-50 px-2 py-1 text-sm text-blue-700">🌊 inside flood extent</span>}
-        {!r.registered && <span className="rounded bg-slate-800 px-2 py-1 text-sm text-slate-300">unregistered number</span>}
+        {!r.registered && <span className="rounded bg-slate-100 px-2 py-1 text-sm text-slate-700">unregistered number</span>}
       </div>
 
       <div className="mt-3">
@@ -525,7 +525,7 @@ function RequestDetail({ r, view, now, onClose, act, routeFrom }: { r: RequestSt
             {r.reasons.map((x) => (
               <tr key={x.label}>
                 <td className="py-0.5">{x.label}</td>
-                <td className="py-0.5 text-right font-mono text-slate-300">+{x.points}</td>
+                <td className="py-0.5 text-right font-mono text-slate-700">+{x.points}</td>
               </tr>
             ))}
           </tbody>
@@ -533,11 +533,11 @@ function RequestDetail({ r, view, now, onClose, act, routeFrom }: { r: RequestSt
       </div>
 
       {r.vulnerable.length > 0 && <div className="mt-2 text-sm text-pink-700">💗 {r.vulnerable.map((v) => `${v.count > 1 ? v.count + " " : ""}${VULNERABLE_LABELS[v.type]}`).join(", ")}</div>}
-      {r.message && <div className="mt-2 rounded-lg bg-slate-950 p-2 text-sm italic text-slate-300">“{r.message}”</div>}
+      {r.message && <div className="mt-2 rounded-lg bg-white p-2 text-sm italic text-slate-700">“{r.message}”</div>}
 
       <div className="mt-2 text-sm">
-        <span className={`font-bold ${src?.cls}`}>📍 {src?.label}</span> <span className="text-slate-400">— {src?.hint}</span>
-        {r.landmark && <div className="text-slate-300">near {r.landmark}</div>}
+        <span className={`font-bold ${src?.cls}`}>📍 {src?.label}</span> <span className="text-slate-600">— {src?.hint}</span>
+        {r.landmark && <div className="text-slate-700">near {r.landmark}</div>}
       </div>
       <div className="mt-1 text-sm">
         {r.name ?? "Unregistered"} · <span className="font-mono">{phone ?? r.phoneMasked}</span>{" "}
@@ -555,7 +555,7 @@ function RequestDetail({ r, view, now, onClose, act, routeFrom }: { r: RequestSt
         </div>
       )}
       {r.offer && offerVol && (
-        <div className="mt-2 text-sm text-slate-300">
+        <div className="mt-2 text-sm text-slate-700">
           ⏳ Offered to {VOL_ICON[offerVol.type]} {offerVol.name}
           {r.offer.operatorAssigned ? " (by operator)" : ""} · expires in {Math.max(0, Math.round((Date.parse(r.offer.expiresAt) - now) / 1000))}s
         </div>
@@ -565,7 +565,7 @@ function RequestDetail({ r, view, now, onClose, act, routeFrom }: { r: RequestSt
       {isOpen && (
         <div className="mt-3 space-y-2">
           <div className="flex gap-2">
-            <select value={assignTo} onChange={(e) => setAssignTo(e.target.value)} className="min-w-0 flex-1 rounded-lg border border-slate-700 bg-slate-950 px-2 py-2 text-sm">
+            <select value={assignTo} onChange={(e) => setAssignTo(e.target.value)} className="min-w-0 flex-1 rounded-lg border border-slate-200 bg-white px-2 py-2 text-sm">
               <option value="">Assign a volunteer…</option>
               {free.map((v) => (
                 <option key={v.id} value={v.id}>
@@ -579,17 +579,17 @@ function RequestDetail({ r, view, now, onClose, act, routeFrom }: { r: RequestSt
           </div>
           <div className="flex flex-wrap gap-2">
             {(r.status !== "new" || r.offer) && (
-              <button onClick={() => void act(() => postJson(`/api/operator/requests/${r.id}`, { action: "unassign" }), "Returned to pool")} className="rounded-lg bg-slate-800 px-3 py-1.5 text-sm hover:bg-slate-700">
+              <button onClick={() => void act(() => postJson(`/api/operator/requests/${r.id}`, { action: "unassign" }), "Returned to pool")} className="rounded-lg bg-slate-100 px-3 py-1.5 text-sm hover:bg-slate-300">
                 Unassign
               </button>
             )}
             <button onClick={() => routeFrom(r.lngLat)} className="rounded-lg bg-emerald-800 px-3 py-1.5 text-sm hover:bg-emerald-700">
               Safe route to shelter
             </button>
-            <button onClick={() => void act(() => postJson(`/api/operator/requests/${r.id}`, { action: "duplicate" }), "Marked duplicate")} className="rounded-lg bg-slate-800 px-3 py-1.5 text-sm hover:bg-slate-700">
+            <button onClick={() => void act(() => postJson(`/api/operator/requests/${r.id}`, { action: "duplicate" }), "Marked duplicate")} className="rounded-lg bg-slate-100 px-3 py-1.5 text-sm hover:bg-slate-300">
               Duplicate
             </button>
-            <button onClick={() => confirm("Close this request without rescue?") && void act(() => postJson(`/api/operator/requests/${r.id}`, { action: "cancel" }), "Closed")} className="rounded-lg bg-slate-800 px-3 py-1.5 text-sm text-red-700 hover:bg-slate-700">
+            <button onClick={() => confirm("Close this request without rescue?") && void act(() => postJson(`/api/operator/requests/${r.id}`, { action: "cancel" }), "Closed")} className="rounded-lg bg-slate-100 px-3 py-1.5 text-sm text-red-700 hover:bg-slate-300">
               Close
             </button>
           </div>
