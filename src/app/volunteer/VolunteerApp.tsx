@@ -34,6 +34,7 @@ interface Me {
   shelters: { id: string; name: string; capacity: number; occupancy: number; distanceM?: number; phone: string }[];
 }
 
+const VULN_LABEL: Record<string, string> = { elderly: "elderly", disabled: "disabled", pregnant: "pregnant", child_under5: "child under 5", bedridden: "bedridden/sick", other: "other" };
 const ICON: Record<string, string> = { boat: "🚤", vehicle: "🚙", on_foot: "🚶", medical: "⛑️" };
 const SRC: Record<string, string> = { registered: "Registered home", ussd_landmark: "Landmark (~200 m)", gps: "GPS", zone_centroid: "Area only — call them", unknown: "Unknown — call them" };
 const dist = (m: number | null) => (m === null ? "?" : m < 1000 ? `${m} m` : `${(m / 1000).toFixed(1)} km`);
@@ -151,13 +152,13 @@ export default function VolunteerApp({ demo, demoPhone }: { demo: boolean; demoP
         </button>
       )}
 
-      {err && <div className="mt-3 rounded-lg bg-red-900/50 p-3 text-red-200">{err}</div>}
+      {err && <div className="mt-3 rounded-lg bg-red-50 p-3 text-red-700">{err}</div>}
 
       {offer && !job && (
-        <section className="mt-4 rounded-2xl border-2 border-amber-400 bg-amber-950/40 p-4" data-testid="offer">
+        <section className="mt-4 rounded-2xl border-2 border-sky-500 bg-sky-50 p-4" data-testid="offer">
           <div className="flex items-center justify-between">
-            <div className="text-xs font-bold uppercase tracking-wider text-amber-300">{offer.operatorAssigned ? "Assigned by operator" : "New rescue job"}</div>
-            <div className="font-mono text-xl font-black text-amber-200">{secsLeft}s</div>
+            <div className="text-xs font-bold uppercase tracking-wider text-sky-700">{offer.operatorAssigned ? "Assigned by operator" : "New rescue job"}</div>
+            <div className="font-mono text-xl font-black text-sky-700">{secsLeft}s</div>
           </div>
           <div className="mt-1 text-3xl font-black">{offer.request.ref}</div>
           <div className="mt-1 text-xl">
@@ -202,15 +203,15 @@ function ActiveJob({ job, shelters, simMove, demo, busy, run }: { job: JobView; 
   const r = job.request;
   return (
     <section className="mt-4 rounded-2xl border-2 border-sky-500 bg-slate-900 p-4" data-testid="job">
-      <div className="text-xs font-bold uppercase tracking-wider text-sky-300">{job.arrivedAt ? "On scene" : "On the way"}</div>
+      <div className="text-xs font-bold uppercase tracking-wider text-sky-700">{job.arrivedAt ? "On scene" : "On the way"}</div>
       <div className="text-3xl font-black">{r.ref}</div>
       <div className="mt-1 text-xl">
         {r.name ?? "Unregistered caller"} · 👥 {r.people}
       </div>
-      {r.vulnerable.length > 0 && <div className="text-pink-200">💗 {r.vulnerable.map((x) => `${x.count > 1 ? x.count + " " : ""}${x.type.replaceAll("_", " ")}`).join(", ")}</div>}
+      {r.vulnerable.length > 0 && <div className="text-pink-700">💗 {r.vulnerable.map((x) => `${x.count > 1 ? x.count + " " : ""}${VULN_LABEL[x.type] ?? x.type}`).join(", ")}</div>}
       {r.message && <div className="mt-1 italic text-slate-300">“{r.message}”</div>}
       <div className="mt-1 text-slate-300">
-        📍 {r.landmark ?? r.zone ?? "?"} — <span className="text-amber-300">{SRC[r.locationSource] ?? r.locationSource}</span> · {dist(job.distanceM)}
+        📍 {r.landmark ?? r.zone ?? "?"} — <span className="font-semibold text-sky-700">{SRC[r.locationSource] ?? r.locationSource}</span> · {dist(job.distanceM)}
       </div>
       <div className="mt-3 grid grid-cols-2 gap-3">
         <a href={`tel:${r.phone}`} className="rounded-xl bg-slate-700 py-3 text-center text-lg font-bold">
@@ -221,7 +222,7 @@ function ActiveJob({ job, shelters, simMove, demo, busy, run }: { job: JobView; 
         </a>
       </div>
       {demo && (
-        <label className="mt-3 flex items-center gap-2 text-sm text-amber-300">
+        <label className="mt-3 flex items-center gap-2 text-sm text-sky-700">
           <input type="checkbox" checked={simMove} onChange={(e) => void run(() => post("/api/volunteer/sim-move", { on: e.target.checked }))} /> Demo: simulate my travel on the command map
         </label>
       )}
@@ -284,8 +285,8 @@ function Login({ demo, demoPhone, onDone }: { demo: boolean; demoPhone: string; 
       >
         <input data-testid="phone" className="w-full rounded-xl bg-slate-800 p-4 text-xl" inputMode="tel" placeholder="Phone number" value={phone} onChange={(e) => setPhone(e.target.value)} disabled={sent} />
         {sent && <input data-testid="code" className="w-full rounded-xl bg-slate-800 p-4 text-center font-mono text-2xl tracking-widest" inputMode="numeric" placeholder="6-digit code" value={code} onChange={(e) => setCode(e.target.value)} autoFocus />}
-        {hint && <div className="text-sm text-amber-300">{hint}</div>}
-        {err && <div className="text-sm text-red-400">{err}</div>}
+        {hint && <div className="text-sm text-sky-700">{hint}</div>}
+        {err && <div className="text-sm text-red-700">{err}</div>}
         <button data-testid="login-submit" className="w-full rounded-xl bg-sky-600 py-4 text-xl font-bold">
           {sent ? "Log in" : "Send code"}
         </button>

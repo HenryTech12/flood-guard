@@ -13,10 +13,10 @@ export async function runMigrations(sql: Sql, { dir = MIGRATIONS_DIR, log = cons
     await tx`select pg_advisory_xact_lock(7311001)`;
     await tx`create table if not exists public.schema_migrations (name text primary key, applied_at timestamptz not null default now())`;
     const done = new Set((await tx<{ name: string }[]>`select name from public.schema_migrations`).map((r) => r.name));
-    const files = fs.readdirSync(dir).filter((f) => f.endsWith(".sql")).sort();
+    const files = fs.readdirSync(/*turbopackIgnore: true*/ dir).filter((f) => f.endsWith(".sql")).sort();
     for (const f of files) {
       if (done.has(f)) continue;
-      await tx.unsafe(fs.readFileSync(path.join(dir, f), "utf8"));
+      await tx.unsafe(fs.readFileSync(path.join(/*turbopackIgnore: true*/ dir, f), "utf8"));
       await tx`insert into public.schema_migrations (name) values (${f})`;
       applied.push(f);
       log(`→ applied ${f}`);

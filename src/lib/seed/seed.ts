@@ -63,8 +63,9 @@ export async function seedDatabase(sql: Sql, region: RegionConfig, opts: SeedOpt
   const dataDir = opts.dataDir ?? path.join(process.cwd(), "public", "data");
   const rand = mulberry32(20221010);
   const readJson = (name: string) => {
-    const p = path.join(dataDir, name);
-    return fs.existsSync(p) ? JSON.parse(fs.readFileSync(p, "utf8")) : null;
+    // Files are bundled explicitly via outputFileTracingIncludes (next.config.ts).
+    const p = path.join(/*turbopackIgnore: true*/ dataDir, name);
+    return fs.existsSync(/*turbopackIgnore: true*/ p) ? JSON.parse(fs.readFileSync(/*turbopackIgnore: true*/ p, "utf8")) : null;
   };
 
   const baseRiskFile = readJson(region.data.baseRisk);

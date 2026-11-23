@@ -14,7 +14,7 @@ export default async function LoginPage({ searchParams }: { searchParams: Promis
         <p className="text-sm text-slate-400">State Emergency Management Agency staff</p>
         <LoginForm next={safeNext} demo={env.demoMode} />
         {env.demoMode && (
-          <a href={`/api/demo/enter?key=${encodeURIComponent(env.demoKey)}&next=${encodeURIComponent(safeNext)}`} className="mt-4 block rounded-lg border border-amber-700 px-4 py-2 text-center text-sm font-bold text-amber-300 hover:bg-amber-950/40">
+          <a href={`/api/demo/enter?key=${encodeURIComponent(env.demoKey)}&next=${encodeURIComponent(safeNext)}`} className="mt-4 block rounded-lg border border-sky-300 px-4 py-2 text-center text-sm font-bold text-sky-700 hover:bg-sky-100">
             Demo mode: enter without password
           </a>
         )}

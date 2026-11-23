@@ -46,18 +46,18 @@ function baseStyle(): StyleSpecification {
       offline: { type: "geojson", data: `/data/${region.data.basemap}` },
       carto: {
         type: "raster",
-        tiles: ["a", "b", "c", "d"].map((s) => `https://${s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}@2x.png`),
+        tiles: ["a", "b", "c", "d"].map((s) => `https://${s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}@2x.png`),
         tileSize: 256,
         maxzoom: 19,
         attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors © <a href="https://carto.com/attributions">CARTO</a>',
       },
     },
     layers: [
-      { id: "bg", type: "background", paint: { "background-color": "#0b2a5c" } },
+      { id: "bg", type: "background", paint: { "background-color": "#eef5fd" } },
       // Offline fallback basemap (approximate). Hidden underneath the raster tiles when online.
-      { id: "offline-water", type: "fill", source: "offline", filter: ["==", ["get", "kind"], "water"], paint: { "fill-color": "#16508f" } },
-      { id: "offline-roads", type: "line", source: "offline", filter: ["==", ["get", "kind"], "road"], paint: { "line-color": "#475569", "line-width": 2 } },
-      { id: "carto", type: "raster", source: "carto", paint: { "raster-opacity": 0.92 } },
+      { id: "offline-water", type: "fill", source: "offline", filter: ["==", ["get", "kind"], "water"], paint: { "fill-color": "#a9d4f5" } },
+      { id: "offline-roads", type: "line", source: "offline", filter: ["==", ["get", "kind"], "road"], paint: { "line-color": "#c3cfdc", "line-width": 2.5 } },
+      { id: "carto", type: "raster", source: "carto", paint: { "raster-opacity": 1 } },
     ],
   };
 }
@@ -188,18 +188,18 @@ export default function MapView({ view, layers, selectedRequestId, onSelectReque
         id: "lines",
         type: "line",
         source: "lines",
-        paint: { "line-color": ["match", ["get", "kind"], "offer", "#94a3b8", "#facc15"], "line-width": 3, "line-dasharray": [1.5, 1.2], "line-opacity": 0.9 },
+        paint: { "line-color": ["match", ["get", "kind"], "offer", "#6886ad", "#0b4ea2"], "line-width": 3, "line-dasharray": [1.5, 1.2], "line-opacity": 0.9 },
       });
-      map.addLayer({ id: "route-casing", type: "line", source: "route", paint: { "line-color": "#022c22", "line-width": 9 } });
-      map.addLayer({ id: "route-line", type: "line", source: "route", paint: { "line-color": "#34d399", "line-width": 5 } });
+      map.addLayer({ id: "route-casing", type: "line", source: "route", paint: { "line-color": "#ffffff", "line-width": 9 } });
+      map.addLayer({ id: "route-line", type: "line", source: "route", paint: { "line-color": "#16a34a", "line-width": 5 } });
       map.addLayer({
         id: "reports",
         type: "circle",
         source: "reports",
         paint: {
           "circle-radius": ["interpolate", ["linear"], ["zoom"], 11, 4, 16, 9],
-          "circle-color": ["match", ["get", "verification"], "consistent", "#22d3ee", "suspicious", "#fb923c", "#e2e8f0"],
-          "circle-stroke-color": "#0f172a",
+          "circle-color": ["match", ["get", "verification"], "consistent", "#0284c7", "suspicious", "#f97316", "#64748b"],
+          "circle-stroke-color": "#ffffff",
           "circle-stroke-width": 2,
         },
       });
@@ -207,7 +207,7 @@ export default function MapView({ view, layers, selectedRequestId, onSelectReque
         id: "checkins",
         type: "circle",
         source: "checkins",
-        paint: { "circle-radius": 6, "circle-color": "#22c55e", "circle-stroke-color": "#052e16", "circle-stroke-width": 2, "circle-blur": 0.1 },
+        paint: { "circle-radius": 6, "circle-color": "#22c55e", "circle-stroke-color": "#ffffff", "circle-stroke-width": 2, "circle-blur": 0.1 },
       });
 
       map.on("click", (e) => {
@@ -222,10 +222,10 @@ export default function MapView({ view, layers, selectedRequestId, onSelectReque
         const f = e.features?.[0];
         if (!f) return;
         const pr = f.properties as Record<string, string>;
-        const html = `<div style="max-width:220px"><b>${pr.label}</b><br/><span style="color:#94a3b8">${pr.when}</span>
+        const html = `<div style="max-width:220px"><b>${pr.label}</b><br/><span style="color:#4a6e9a">${pr.when}</span>
           <br/>${pr.description ? pr.description.replace(/</g, "&lt;") : ""}
           ${pr.photo ? `<img src="${pr.photo}" style="margin-top:6px;border-radius:6px;max-width:100%"/>` : ""}
-          <div style="margin-top:4px;color:${pr.verification === "consistent" ? "#22d3ee" : pr.verification === "suspicious" ? "#fb923c" : "#cbd5e1"}">${pr.verification.toUpperCase()}: ${pr.reason ?? ""}</div></div>`;
+          <div style="margin-top:4px;color:${pr.verification === "consistent" ? "#0284c7" : pr.verification === "suspicious" ? "#ea580c" : "#4a6e9a"}">${pr.verification.toUpperCase()}: ${pr.reason ?? ""}</div></div>`;
         new maplibregl.Popup({ closeButton: true }).setLngLat(e.lngLat).setHTML(html).addTo(map);
       });
       for (const l of ["reports", "zones-fill"]) {
@@ -380,7 +380,7 @@ export default function MapView({ view, layers, selectedRequestId, onSelectReque
       }
       const pct = Math.min(100, Math.round((s.occupancy / Math.max(1, s.capacity)) * 100));
       const color = pct > 90 ? "#ef4444" : pct > 70 ? "#f59e0b" : "#22c55e";
-      m.getElement().innerHTML = `⛺ ${s.occupancy}<span style="color:#64748b">/${s.capacity}</span><div class="bar"><div style="width:${pct}%;background:${color}"></div></div>`;
+      m.getElement().innerHTML = `⛺ ${s.occupancy}<span style="color:#6886ad">/${s.capacity}</span><div class="bar"><div style="width:${pct}%;background:${color}"></div></div>`;
       m.getElement().title = `${s.name} — ${s.occupancy}/${s.capacity} · ${s.phone}`;
     }
     for (const [id, m] of shelterMarkers.current) if (!sSeen.has(id)) (m.remove(), shelterMarkers.current.delete(id));

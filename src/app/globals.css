@@ -1,24 +1,25 @@
 @import "tailwindcss";
 
 @theme {
-  /* FloodGuard palette: the neutral "slate" scale is remapped to blues so every page
-     shares one deep-blue background with light-blue text and accents.
-     Red = warnings / danger, green = safe / success. */
-  --color-slate-50: #eef6ff;
-  --color-slate-100: #dcedff;
-  --color-slate-200: #c4e2ff;
-  --color-slate-300: #a6d3ff;
-  --color-slate-400: #86bdf2;
-  --color-slate-500: #6199d4;
-  --color-slate-600: #3f7cc0;
-  --color-slate-700: #2b62a5;
-  --color-slate-800: #1e4f8d;
-  --color-slate-900: #153f78;
-  --color-slate-950: #0c2c61;
+  /* FloodGuard palette (light): white backgrounds, navy text, blue + light-blue as the
+     main colours. The neutral "slate" scale is remapped so the whole app follows it:
+     slate-950 = page/panel background … slate-50 = strongest text.
+     Red is reserved for danger/warnings and green for safe/success. */
+  --color-slate-50: #0a2452;
+  --color-slate-100: #11305f;
+  --color-slate-200: #1c4170;
+  --color-slate-300: #2f5583;
+  --color-slate-400: #4a6e9a;
+  --color-slate-500: #6886ad;
+  --color-slate-600: #9db6d6;
+  --color-slate-700: #c3d6ee;
+  --color-slate-800: #dbe8f7;
+  --color-slate-900: #eef5fd;
+  --color-slate-950: #ffffff;
   --color-brand-deep: #0a2452;
   --color-brand: #0b4ea2;
   --color-brand-light: #8fd0ff;
-  --color-brand-pale: #e6f3ff;
+  --color-brand-pale: #eaf4ff;
   --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif;
   --font-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
   --color-risk-low: #22c55e;
@@ -29,13 +30,25 @@
 
 html,
 body {
-  background: #0a2452;
-  color: #eef6ff;
+  background: #ffffff;
+  color: #0a2452;
 }
-body {
-  background: radial-gradient(1200px 600px at 15% -10%, #1a5bb5 0%, transparent 60%), radial-gradient(900px 500px at 100% 0%, #0f4a9e 0%, transparent 55%),
-    linear-gradient(180deg, #0c2f68 0%, #0a2452 100%);
-  background-attachment: fixed;
+
+/* Solid coloured buttons and badges always get white text on the light theme
+   (unlayered CSS wins over Tailwind utilities). */
+.bg-sky-500,
+.bg-sky-600,
+.bg-sky-700,
+.bg-red-500,
+.bg-red-600,
+.bg-red-700,
+.bg-red-800,
+.bg-green-500,
+.bg-green-600,
+.bg-emerald-600,
+.bg-emerald-700,
+.bg-emerald-800 {
+  color: #ffffff;
 }
 
 /* ---------- map markers ---------- */
@@ -44,8 +57,8 @@ body {
   width: 22px;
   height: 22px;
   border-radius: 9999px;
-  border: 3px solid #0f172a;
-  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.85), 0 4px 10px rgba(0, 0, 0, 0.5);
+  border: 3px solid #ffffff;
+  box-shadow: 0 0 0 2px rgba(10, 36, 82, 0.55), 0 4px 10px rgba(10, 36, 82, 0.35);
   cursor: pointer;
   transition: transform 0.2s ease, background-color 0.4s ease;
 }
@@ -93,14 +106,15 @@ body {
   display: grid;
   place-items: center;
   font-size: 19px;
-  background: #0f172a;
-  border: 2px solid #38bdf8;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.6);
+  background: #ffffff;
+  border: 2px solid #0b4ea2;
+  box-shadow: 0 4px 12px rgba(10, 36, 82, 0.35);
   cursor: pointer;
 }
 .fg-vol.busy {
-  border-color: #facc15;
-  box-shadow: 0 0 0 4px rgba(250, 204, 21, 0.25), 0 4px 12px rgba(0, 0, 0, 0.6);
+  border-color: #0b4ea2;
+  background: #eaf4ff;
+  box-shadow: 0 0 0 4px rgba(11, 78, 162, 0.25), 0 4px 12px rgba(10, 36, 82, 0.35);
 }
 .fg-vol.off {
   opacity: 0.45;
@@ -108,20 +122,20 @@ body {
 }
 
 .fg-shelter {
-  background: #0f172a;
-  border: 2px solid #22d3ee;
+  background: #ffffff;
+  border: 2px solid #0b4ea2;
   border-radius: 8px;
   padding: 3px 6px;
   font-size: 11px;
   font-weight: 700;
-  color: #e2e8f0;
+  color: #0a2452;
   min-width: 52px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.6);
+  box-shadow: 0 4px 12px rgba(10, 36, 82, 0.3);
   cursor: pointer;
 }
 .fg-shelter .bar {
   height: 5px;
-  background: #1e293b;
+  background: #dbe8f7;
   border-radius: 3px;
   margin-top: 3px;
   overflow: hidden;
@@ -135,8 +149,8 @@ body {
   font-size: 13px;
   font-weight: 800;
   letter-spacing: 0.02em;
-  color: #f8fafc;
-  text-shadow: 0 1px 3px #000, 0 0 8px #000;
+  color: #0a2452;
+  text-shadow: 0 0 3px #fff, 0 0 6px #fff, 0 0 10px #fff;
   pointer-events: none;
   white-space: nowrap;
   text-align: center;
@@ -170,23 +184,23 @@ body {
 }
 
 .maplibregl-popup-content {
-  background: #0f172a !important;
-  color: #e2e8f0 !important;
-  border: 1px solid #334155;
+  background: #ffffff !important;
+  color: #0a2452 !important;
+  border: 1px solid #c3d6ee;
   border-radius: 10px !important;
   padding: 10px 12px !important;
   font-size: 13px;
 }
 .maplibregl-popup-tip {
-  border-top-color: #0f172a !important;
-  border-bottom-color: #0f172a !important;
+  border-top-color: #ffffff !important;
+  border-bottom-color: #ffffff !important;
 }
 .maplibregl-ctrl-attrib {
-  background: rgba(2, 6, 23, 0.7) !important;
-  color: #94a3b8 !important;
+  background: rgba(255, 255, 255, 0.85) !important;
+  color: #4a6e9a !important;
 }
 .maplibregl-ctrl-attrib a {
-  color: #cbd5e1 !important;
+  color: #0b4ea2 !important;
 }
 
 /* scrollbars in panels */
@@ -194,7 +208,7 @@ body {
   width: 8px;
 }
 .fg-scroll::-webkit-scrollbar-thumb {
-  background: #334155;
+  background: #c3d6ee;
   border-radius: 4px;
 }
 

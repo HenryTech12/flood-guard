@@ -59,7 +59,7 @@ const SECTIONS: [string, React.ReactNode][] = [
 export default function PrivacyPage() {
   return (
     <main className="mx-auto max-w-2xl px-4 py-8">
-      <Link href="/" className="text-sm text-slate-400 hover:text-white">
+      <Link href="/" className="text-sm text-slate-400 hover:text-slate-50">
         ← FloodGuard
       </Link>
       <h1 className="mt-2 text-3xl font-black">Privacy notice</h1>

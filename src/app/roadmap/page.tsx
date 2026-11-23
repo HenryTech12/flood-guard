@@ -36,7 +36,7 @@ const NEXT = [
 export default function RoadmapPage() {
   return (
     <main className="mx-auto max-w-4xl px-4 py-8">
-      <Link href="/" className="text-sm text-slate-400 hover:text-white">
+      <Link href="/" className="text-sm text-slate-400 hover:text-slate-50">
         ← FloodGuard
       </Link>
       <h1 className="mt-2 text-3xl font-black">Roadmap</h1>
@@ -47,7 +47,7 @@ export default function RoadmapPage() {
             <div className="text-3xl">{p.icon}</div>
             <div className="mt-2 text-lg font-bold">{p.title}</div>
             <p className="mt-1 text-sm text-slate-400">{p.body}</p>
-            <div className="mt-3 rounded bg-amber-950/40 px-2 py-1 text-xs text-amber-300">{p.status}</div>
+            <div className="mt-3 rounded bg-sky-50 px-2 py-1 text-xs text-sky-700">{p.status}</div>
           </div>
         ))}
       </div>

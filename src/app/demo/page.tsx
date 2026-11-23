@@ -21,8 +21,8 @@ export default async function DemoPage({ searchParams }: { searchParams: Promise
           <h1 className="text-2xl font-black">Demo control panel</h1>
           <p className="text-sm text-slate-400">Enter the demo key (DEMO_KEY).</p>
           <input name="key" type="password" className="mt-4 w-full rounded-lg border border-slate-700 bg-slate-950 px-3 py-2" placeholder="Demo key" autoFocus />
-          {error && <div className="mt-2 text-sm text-red-400">Wrong key.</div>}
-          <button className="mt-3 w-full rounded-lg bg-amber-500 px-4 py-2 font-bold text-slate-950">Unlock</button>
+          {error && <div className="mt-2 text-sm text-red-700">Wrong key.</div>}
+          <button className="mt-3 w-full rounded-lg bg-sky-600 px-4 py-2 font-bold text-[#08203f]">Unlock</button>
         </form>
       </main>
     );

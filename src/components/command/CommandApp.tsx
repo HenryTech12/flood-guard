@@ -157,27 +157,27 @@ export default function CommandApp({ operatorName, demo }: { operatorName: strin
           </div>
         </Link>
         <div className="flex items-center gap-2 rounded-full border border-slate-700 px-3 py-1 text-sm" title={`Live updates via ${transport}`}>
-          <span className={`h-2.5 w-2.5 rounded-full ${tPos !== null ? "bg-amber-400" : transport === "polling" || transport === "connecting" ? "bg-yellow-400" : "animate-pulse bg-green-400"}`} />
+          <span className={`h-2.5 w-2.5 rounded-full ${tPos !== null ? "bg-sky-500" : transport === "polling" || transport === "connecting" ? "bg-yellow-400" : "animate-pulse bg-green-400"}`} />
           {tPos !== null ? "REPLAY" : "LIVE"} <span className="text-slate-500">{tPos === null && transport}</span>
         </div>
         {view.demo.simTime && (
-          <div className="rounded-full border border-purple-700 bg-purple-950/50 px-3 py-1 text-sm text-purple-200" data-testid="sim-clock">
+          <div className="rounded-full border border-purple-300 bg-purple-50 px-3 py-1 text-sm text-purple-700" data-testid="sim-clock">
             🌧 {view.demo.replayRunning ? "Replaying" : "Rainfall at"} {new Date(view.demo.simTime).toLocaleString("en-GB", { day: "numeric", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit", timeZone: "Africa/Lagos" })}
           </div>
         )}
         <div className="ml-auto flex items-center gap-2">
-          <Stat label="Waiting" value={s.waiting} color="text-red-300" testid="stat-waiting" />
-          <Stat label="En route" value={s.assigned + s.enRoute} color="text-yellow-200" />
-          <Stat label="Rescued" value={s.rescued} color="text-green-300" testid="stat-rescued" />
-          <Stat label="Safe check-ins" value={s.safeCheckins} color="text-emerald-300" />
-          <Stat label="Avg to accept" value={s.avgAcceptSec !== null ? `${Math.round(s.avgAcceptSec)}s` : "—"} color="text-sky-300" />
-          <Stat label="Avg to rescue" value={s.avgRescueMin !== null ? `${s.avgRescueMin.toFixed(1)}m` : "—"} color="text-sky-300" />
+          <Stat label="Waiting" value={s.waiting} color="text-red-700" testid="stat-waiting" />
+          <Stat label="En route" value={s.assigned + s.enRoute} color="text-yellow-700" />
+          <Stat label="Rescued" value={s.rescued} color="text-green-700" testid="stat-rescued" />
+          <Stat label="Safe check-ins" value={s.safeCheckins} color="text-emerald-700" />
+          <Stat label="Avg to accept" value={s.avgAcceptSec !== null ? `${Math.round(s.avgAcceptSec)}s` : "—"} color="text-sky-700" />
+          <Stat label="Avg to rescue" value={s.avgRescueMin !== null ? `${s.avgRescueMin.toFixed(1)}m` : "—"} color="text-sky-700" />
         </div>
         <div className="ml-2 text-right text-xs text-slate-400">
           <div>{operatorName}</div>
           <div className="flex gap-2">
             {demo && (
-              <Link href="/demo" className="text-amber-300 hover:underline">
+              <Link href="/demo" className="text-sky-700 hover:underline">
                 Demo panel
               </Link>
             )}
@@ -202,13 +202,13 @@ export default function CommandApp({ operatorName, demo }: { operatorName: strin
           </div>
           <div className="mt-2 text-xs text-slate-500">
             Flood extent: Sentinel-1{view.floodExtentObservedAt ? `, ${new Date(view.floodExtentObservedAt).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" })}` : ""}
-            {view.floodExtentSynthetic && <span className="text-amber-400"> (synthetic demo data)</span>}
+            {view.floodExtentSynthetic && <span className="text-red-700"> (synthetic demo data)</span>}
           </div>
         </Card>
 
         <Card title="Safe route">
           <div className="flex gap-2">
-            <button onClick={() => setPickMode((p) => !p)} className={`flex-1 rounded-lg px-3 py-2 text-sm font-bold ${pickMode ? "bg-emerald-500 text-slate-950" : "bg-slate-800 hover:bg-slate-700"}`}>
+            <button onClick={() => setPickMode((p) => !p)} className={`flex-1 rounded-lg px-3 py-2 text-sm font-bold ${pickMode ? "bg-emerald-500 text-[#08203f]" : "bg-slate-800 hover:bg-slate-700"}`}>
               {pickMode ? "Click a point on the map…" : "Pick start point"}
             </button>
             {route && (
@@ -219,12 +219,12 @@ export default function CommandApp({ operatorName, demo }: { operatorName: strin
           </div>
           {route && (
             <div className="mt-2 text-sm">
-              <div className="font-bold text-emerald-300">→ {route.shelter?.name ?? "no shelter"} {route.shelter && <span className="font-normal text-slate-400">({route.shelter.space} spaces)</span>}</div>
+              <div className="font-bold text-emerald-700">→ {route.shelter?.name ?? "no shelter"} {route.shelter && <span className="font-normal text-slate-400">({route.shelter.space} spaces)</span>}</div>
               <div className="text-slate-400">
                 {route.distanceM !== null && formatDistance(route.distanceM)} · {route.method === "openrouteservice" ? `~${route.durationMin} min, avoids flood` : "straight-line guide"}
               </div>
               {route.warnings.map((w) => (
-                <div key={w} className="text-xs text-amber-300">
+                <div key={w} className="text-xs text-red-700">
                   ⚠ {w}
                 </div>
               ))}
@@ -235,9 +235,9 @@ export default function CommandApp({ operatorName, demo }: { operatorName: strin
         <Card title={`Hotspots (${view.hotspots.length})`}>
           {view.hotspots.length === 0 && <div className="text-sm text-slate-500">No clusters (≥5 requests within 500 m in 15 min).</div>}
           {view.hotspots.map((h, i) => (
-            <button key={i} onClick={() => setFlyTo({ center: h.center, zoom: 15.5, key: Date.now() })} className="mb-1 flex w-full items-center justify-between rounded-lg border border-red-800 bg-red-950/40 px-3 py-2 text-left hover:bg-red-900/40">
-              <span className="font-bold text-red-200">🔥 {h.count} requests</span>
-              <span className="text-xs text-red-300">within {h.radiusM} m · zoom →</span>
+            <button key={i} onClick={() => setFlyTo({ center: h.center, zoom: 15.5, key: Date.now() })} className="mb-1 flex w-full items-center justify-between rounded-lg border border-red-300 bg-red-50 px-3 py-2 text-left hover:bg-red-100">
+              <span className="font-bold text-red-700">🔥 {h.count} requests</span>
+              <span className="text-xs text-red-700">within {h.radiusM} m · zoom →</span>
             </button>
           ))}
         </Card>
@@ -253,7 +253,7 @@ export default function CommandApp({ operatorName, demo }: { operatorName: strin
               ["alerts", "Alerts"],
             ] as const
           ).map(([k, label]) => (
-            <button key={k} onClick={() => setTab(k)} className={`flex-1 px-3 py-3 ${tab === k ? "border-b-2 border-sky-400 text-sky-300" : "text-slate-400 hover:text-slate-200"}`}>
+            <button key={k} onClick={() => setTab(k)} className={`flex-1 px-3 py-3 ${tab === k ? "border-b-2 border-sky-400 text-sky-700" : "text-slate-400 hover:text-slate-200"}`}>
               {label}
             </button>
           ))}
@@ -353,7 +353,7 @@ export default function CommandApp({ operatorName, demo }: { operatorName: strin
                 {Object.entries(view.languageStatus).map(([l, st]) => (
                   <div key={l} className="flex justify-between">
                     <span className="uppercase">{l}</span>
-                    <span className={st === "NEEDS_NATIVE_REVIEW" ? "text-amber-300" : "text-green-300"}>{st === "NEEDS_NATIVE_REVIEW" ? "English fallback — needs native review" : st}</span>
+                    <span className={st === "NEEDS_NATIVE_REVIEW" ? "text-red-700" : "text-green-700"}>{st === "NEEDS_NATIVE_REVIEW" ? "English fallback — needs native review" : st}</span>
                   </div>
                 ))}
               </div>
@@ -363,7 +363,7 @@ export default function CommandApp({ operatorName, demo }: { operatorName: strin
                   <div>
                     <span className={`mr-2 rounded border px-1.5 text-xs font-bold ${LEVEL_BG[(a.level as "low") ?? "low"] ?? ""}`}>{a.level.toUpperCase()}</span>
                     <b>{view.zones.find((z) => z.id === a.zoneId)?.shortName}</b> · {a.channel === "radio_script" ? "📻 radio script" : a.channel === "voice" ? "📞 voice" : "✉ SMS"} · {a.language.toUpperCase()}
-                    {a.fallbackFrom && <span className="ml-1 text-xs text-amber-300">(sent in English)</span>}
+                    {a.fallbackFrom && <span className="ml-1 text-xs text-red-700">(sent in English)</span>}
                   </div>
                   <div className="text-right text-xs text-slate-400">
                     {a.channel !== "radio_script" && <div className="font-bold text-slate-200">{a.sentCount} sent</div>}
@@ -407,7 +407,7 @@ export default function CommandApp({ operatorName, demo }: { operatorName: strin
             <span>Now</span>
           </div>
         </div>
-        <button onClick={() => (setTPos(null), setPlaying(false))} className={`rounded-lg px-4 py-2 font-black ${tPos === null ? "bg-green-600 text-white" : "bg-slate-800 text-green-300 hover:bg-slate-700"}`}>
+        <button onClick={() => (setTPos(null), setPlaying(false))} className={`rounded-lg px-4 py-2 font-black ${tPos === null ? "bg-green-600 text-slate-50" : "bg-slate-800 text-green-700 hover:bg-slate-700"}`}>
           LIVE
         </button>
       </footer>
@@ -417,7 +417,7 @@ export default function CommandApp({ operatorName, demo }: { operatorName: strin
           <div className="w-[640px] max-w-[95vw] rounded-2xl border border-slate-700 bg-slate-900 p-5" onClick={(e) => e.stopPropagation()}>
             <div className="mb-2 flex items-center justify-between">
               <div className="text-lg font-bold">📻 Community radio script — {radio.zone}</div>
-              <button onClick={() => setRadio(null)} className="text-slate-400 hover:text-white">
+              <button onClick={() => setRadio(null)} className="text-slate-400 hover:text-slate-50">
                 ✕
               </button>
             </div>
@@ -459,7 +459,7 @@ function QueueRow({ r, now, selected, onClick, vol, zoneName }: { r: RequestStat
   return (
     <button onClick={onClick} className={`w-full rounded-xl border p-3 text-left transition ${selected ? "border-sky-500 bg-slate-800" : "border-slate-800 bg-slate-900/70 hover:border-slate-600"}`} data-testid={`req-${r.ref}`}>
       <div className="flex items-center gap-3">
-        <div className="grid h-12 w-12 shrink-0 place-items-center rounded-lg text-xl font-black text-slate-950" style={{ background: urgencyColor(r.urgency) }} title="Urgency score">
+        <div className="grid h-12 w-12 shrink-0 place-items-center rounded-lg text-xl font-black text-[#08203f]" style={{ background: urgencyColor(r.urgency) }} title="Urgency score">
           {r.urgency}
         </div>
         <div className="min-w-0 flex-1">
@@ -472,7 +472,7 @@ function QueueRow({ r, now, selected, onClick, vol, zoneName }: { r: RequestStat
           <div className="truncate text-sm text-slate-300">
             👥 {r.people} · {r.landmark ?? zoneName} · <span className={src?.cls}>{src?.label}</span>
             {vol && (
-              <span className="text-sky-300">
+              <span className="text-sky-700">
                 {" "}
                 · {VOL_ICON[vol.type]} {vol.name.split(" ")[0]}
               </span>
@@ -497,7 +497,7 @@ function RequestDetail({ r, view, now, onClose, act, routeFrom }: { r: RequestSt
   useEffect(() => setPhone(null), [r.id]);
 
   return (
-    <div className="mb-3 rounded-xl border border-sky-700 bg-slate-900 p-4" data-testid="request-detail">
+    <div className="mb-3 rounded-xl border border-sky-300 bg-slate-900 p-4" data-testid="request-detail">
       <div className="flex items-start justify-between">
         <div>
           <div className="font-mono text-2xl font-black">{r.ref}</div>
@@ -505,7 +505,7 @@ function RequestDetail({ r, view, now, onClose, act, routeFrom }: { r: RequestSt
             {zoneName} · via {r.channel.toUpperCase()} · {ago(r.createdAt, now)} ago{r.mergedCount ? ` · ${r.mergedCount} follow-up msg` : ""}
           </div>
         </div>
-        <button onClick={onClose} className="text-slate-500 hover:text-white">
+        <button onClick={onClose} className="text-slate-500 hover:text-slate-50">
           ✕
         </button>
       </div>
@@ -514,7 +514,7 @@ function RequestDetail({ r, view, now, onClose, act, routeFrom }: { r: RequestSt
           {STATUS_LABEL[r.status]}
         </span>
         <span className="rounded bg-slate-800 px-2 py-1 text-sm">👥 {r.people} people</span>
-        {r.insideFlood && <span className="rounded bg-blue-900/60 px-2 py-1 text-sm text-blue-200">🌊 inside flood extent</span>}
+        {r.insideFlood && <span className="rounded bg-blue-50 px-2 py-1 text-sm text-blue-700">🌊 inside flood extent</span>}
         {!r.registered && <span className="rounded bg-slate-800 px-2 py-1 text-sm text-slate-300">unregistered number</span>}
       </div>
 
@@ -532,7 +532,7 @@ function RequestDetail({ r, view, now, onClose, act, routeFrom }: { r: RequestSt
         </table>
       </div>
 
-      {r.vulnerable.length > 0 && <div className="mt-2 text-sm text-pink-200">💗 {r.vulnerable.map((v) => `${v.count > 1 ? v.count + " " : ""}${VULNERABLE_LABELS[v.type]}`).join(", ")}</div>}
+      {r.vulnerable.length > 0 && <div className="mt-2 text-sm text-pink-700">💗 {r.vulnerable.map((v) => `${v.count > 1 ? v.count + " " : ""}${VULNERABLE_LABELS[v.type]}`).join(", ")}</div>}
       {r.message && <div className="mt-2 rounded-lg bg-slate-950 p-2 text-sm italic text-slate-300">“{r.message}”</div>}
 
       <div className="mt-2 text-sm">
@@ -542,14 +542,14 @@ function RequestDetail({ r, view, now, onClose, act, routeFrom }: { r: RequestSt
       <div className="mt-1 text-sm">
         {r.name ?? "Unregistered"} · <span className="font-mono">{phone ?? r.phoneMasked}</span>{" "}
         {!phone && (
-          <button className="text-xs text-sky-400 hover:underline" onClick={async () => setPhone((await postJson<{ phone: string }>(`/api/operator/requests/${r.id}`, { action: "reveal" })).phone)}>
+          <button className="text-xs text-sky-700 hover:underline" onClick={async () => setPhone((await postJson<{ phone: string }>(`/api/operator/requests/${r.id}`, { action: "reveal" })).phone)}>
             reveal (logged)
           </button>
         )}
       </div>
 
       {vol && (
-        <div className="mt-2 text-sm text-sky-200">
+        <div className="mt-2 text-sm text-sky-700">
           {VOL_ICON[vol.type]} {vol.name} — {STATUS_LABEL[r.status]}
           {vol.arrived ? " · arrived on scene" : ""}
         </div>
@@ -560,7 +560,7 @@ function RequestDetail({ r, view, now, onClose, act, routeFrom }: { r: RequestSt
           {r.offer.operatorAssigned ? " (by operator)" : ""} · expires in {Math.max(0, Math.round((Date.parse(r.offer.expiresAt) - now) / 1000))}s
         </div>
       )}
-      {r.status === "new" && !r.offer && <div className="mt-2 text-sm text-amber-300">No volunteer available yet — will auto-offer when one is free.</div>}
+      {r.status === "new" && !r.offer && <div className="mt-2 text-sm text-red-700">No volunteer available yet — will auto-offer when one is free.</div>}
 
       {isOpen && (
         <div className="mt-3 space-y-2">
@@ -589,7 +589,7 @@ function RequestDetail({ r, view, now, onClose, act, routeFrom }: { r: RequestSt
             <button onClick={() => void act(() => postJson(`/api/operator/requests/${r.id}`, { action: "duplicate" }), "Marked duplicate")} className="rounded-lg bg-slate-800 px-3 py-1.5 text-sm hover:bg-slate-700">
               Duplicate
             </button>
-            <button onClick={() => confirm("Close this request without rescue?") && void act(() => postJson(`/api/operator/requests/${r.id}`, { action: "cancel" }), "Closed")} className="rounded-lg bg-slate-800 px-3 py-1.5 text-sm text-red-300 hover:bg-slate-700">
+            <button onClick={() => confirm("Close this request without rescue?") && void act(() => postJson(`/api/operator/requests/${r.id}`, { action: "cancel" }), "Closed")} className="rounded-lg bg-slate-800 px-3 py-1.5 text-sm text-red-700 hover:bg-slate-700">
               Close
             </button>
           </div>

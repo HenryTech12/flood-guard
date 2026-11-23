@@ -128,25 +128,25 @@ export default function RegisterForm() {
           </div>
         ))}
         {family.length < 3 && (
-          <button type="button" onClick={() => setFamily((fm) => [...fm, { phone: "", name: "", email: "" }])} className="text-sm text-sky-400">
+          <button type="button" onClick={() => setFamily((fm) => [...fm, { phone: "", name: "", email: "" }])} className="text-sm text-sky-700">
             + add another
           </button>
         )}
       </fieldset>
 
-      <label className="flex items-start gap-3 rounded-xl border border-sky-900 bg-sky-950/30 p-4">
+      <label className="flex items-start gap-3 rounded-xl border border-sky-300 bg-sky-50 p-4">
         <input type="checkbox" required checked={f.consent} onChange={(e) => set("consent", e.target.checked)} className="mt-1 h-5 w-5" />
         <span className="text-sm">
           <b>Consent.</b> {f.onBehalf ? "The person being registered agrees" : "I agree"} that FloodGuard stores this phone number, email (if given), area, home location (if given), household needs and family contacts <b>only</b> to send flood warnings and to
           prioritise and guide rescue. It is not shared for any other purpose. You can stop alerts by sending STOP, or erase everything by sending DELETE, at any time. See the{" "}
-          <a href="/privacy" className="text-sky-400 underline" target="_blank">
+          <a href="/privacy" className="text-sky-700 underline" target="_blank">
             privacy notice
           </a>
           .
         </span>
       </label>
 
-      {msg && <div className={`rounded-lg p-3 ${msg.ok ? "bg-green-900/50 text-green-200" : "bg-red-900/50 text-red-200"}`}>{msg.text}</div>}
+      {msg && <div className={`rounded-lg p-3 ${msg.ok ? "bg-green-50 text-green-700" : "bg-red-50 text-red-700"}`}>{msg.text}</div>}
       <button className="w-full rounded-xl bg-sky-600 py-3 text-lg font-bold hover:bg-sky-500">Register household</button>
     </form>
   );

@@ -25,7 +25,7 @@ export default function LoginForm({ next, demo }: { next: string; demo: boolean 
     >
       <input className="w-full rounded-lg border border-slate-700 bg-slate-950 px-3 py-2" type="email" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} required autoComplete="username" />
       <input className="w-full rounded-lg border border-slate-700 bg-slate-950 px-3 py-2" type="password" placeholder={demo ? "Password (demo: floodguard-demo)" : "Password"} value={password} onChange={(e) => setPassword(e.target.value)} required autoComplete="current-password" />
-      {err && <div className="text-sm text-red-400">{err}</div>}
+      {err && <div className="text-sm text-red-700">{err}</div>}
       <button disabled={busy} className="w-full rounded-lg bg-sky-600 px-4 py-2 font-bold hover:bg-sky-500 disabled:opacity-50">
         {busy ? "Signing in…" : "Sign in"}
       </button>

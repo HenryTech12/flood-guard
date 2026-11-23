@@ -7,7 +7,7 @@ export const metadata = { title: "Report flooding" };
 export default function ReportPage() {
   return (
     <main className="mx-auto max-w-xl px-4 py-8">
-      <Link href="/" className="text-sm text-slate-400 hover:text-white">
+      <Link href="/" className="text-sm text-slate-400 hover:text-slate-50">
         ← FloodGuard
       </Link>
       <h1 className="mt-2 text-3xl font-black">Report flooding</h1>

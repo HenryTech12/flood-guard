@@ -20,7 +20,7 @@ export default function SimPage() {
     <main className="mx-auto grid max-w-5xl gap-8 px-4 py-8 md:grid-cols-[1fr_360px]">
       <PhoneSim presets={presets} ussdCode={region.ussdCode} shortcode={region.smsShortcode} exampleLandmark={region.exampleLandmark} />
       <aside className="space-y-4 text-sm text-slate-300">
-        <h1 className="text-2xl font-black text-white">Phone simulator</h1>
+        <h1 className="text-2xl font-black text-slate-50">Phone simulator</h1>
         <p>
           This basic phone sends real SMS and USSD requests into FloodGuard&apos;s webhooks, exactly as Africa&apos;s Talking would. Replies, alerts and
           &ldquo;is safe&rdquo; messages appear on the phone. Nothing is sent to real numbers.
@@ -49,7 +49,7 @@ export default function SimPage() {
           <Link href="/volunteer" target="_blank" className="rounded-lg bg-slate-800 px-4 py-2 text-center font-bold hover:bg-slate-700">
             Open volunteer app ↗
           </Link>
-          <Link href="/demo" className="rounded-lg border border-amber-700 px-4 py-2 text-center font-bold text-amber-300 hover:bg-amber-950/40">
+          <Link href="/demo" className="rounded-lg border border-sky-300 px-4 py-2 text-center font-bold text-sky-700 hover:bg-sky-100">
             Demo control panel
           </Link>
         </div>

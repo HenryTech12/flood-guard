@@ -107,7 +107,7 @@ export default function ReportForm() {
       {/* eslint-disable-next-line @next/next/no-img-element */}
       {photo && <img src={photo} alt="preview" className="max-h-40 rounded-lg" />}
       <input value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="Your phone (optional, so operators can call back)" className="w-full rounded-lg border border-slate-700 bg-slate-950 px-3 py-2" />
-      {msg && <div className={`rounded-lg p-3 ${msg.ok ? "bg-green-900/50 text-green-200" : "bg-red-900/50 text-red-200"}`}>{msg.text}</div>}
+      {msg && <div className={`rounded-lg p-3 ${msg.ok ? "bg-green-50 text-green-700" : "bg-red-50 text-red-700"}`}>{msg.text}</div>}
       <button className="w-full rounded-xl bg-sky-600 py-3 text-lg font-bold hover:bg-sky-500">Send report</button>
       <p className="text-xs text-slate-500">If someone is in danger, do not use this form — send HELP by SMS.</p>
     </form>

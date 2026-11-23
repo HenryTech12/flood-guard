@@ -123,7 +123,7 @@ export default function PhoneSim({ presets, ussdCode, shortcode, exampleLandmark
               {!ussd ? (
                 <div className="m-auto text-center">
                   <div className="text-lg font-bold">{ussdCode}</div>
-                  <button onClick={() => void ussdSend([], `sim-${crypto.randomUUID()}`)} className="mt-3 rounded bg-green-700 px-4 py-1 font-bold text-white" data-testid="ussd-dial">
+                  <button onClick={() => void ussdSend([], `sim-${crypto.randomUUID()}`)} className="mt-3 rounded bg-green-700 px-4 py-1 font-bold text-slate-50" data-testid="ussd-dial">
                     📞 Dial
                   </button>
                 </div>
@@ -133,7 +133,7 @@ export default function PhoneSim({ presets, ussdCode, shortcode, exampleLandmark
                     {ussd.screen}
                   </pre>
                   {ussd.done ? (
-                    <button onClick={() => setUssd(null)} className="rounded bg-slate-800 py-1 font-bold text-white">
+                    <button onClick={() => setUssd(null)} className="rounded bg-slate-800 py-1 font-bold text-slate-50">
                       OK
                     </button>
                   ) : (
@@ -145,8 +145,8 @@ export default function PhoneSim({ presets, ussdCode, shortcode, exampleLandmark
                       }}
                     >
                       <input data-testid="ussd-input" autoFocus value={ussdInput} onChange={(e) => setUssdInput(e.target.value)} className="min-w-0 flex-1 rounded border border-slate-700 bg-[#dfe9d2] px-1" />
-                      <button className="rounded bg-slate-800 px-2 font-bold text-white">Send</button>
-                      <button type="button" onClick={() => setUssd(null)} className="rounded bg-red-800 px-2 font-bold text-white">
+                      <button className="rounded bg-slate-800 px-2 font-bold text-slate-50">Send</button>
+                      <button type="button" onClick={() => setUssd(null)} className="rounded bg-red-800 px-2 font-bold text-slate-50">
                         ✕
                       </button>
                     </form>

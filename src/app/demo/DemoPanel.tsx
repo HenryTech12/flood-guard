@@ -65,7 +65,7 @@ export default function DemoPanel() {
     <main className="mx-auto max-w-7xl px-4 py-6">
       <div className="flex flex-wrap items-center gap-3">
         <h1 className="text-3xl font-black">Demo control panel</h1>
-        <span className="rounded-full border border-amber-700 px-3 py-1 text-sm text-amber-300">messaging: {log?.provider ?? "…"} · email: {log?.emailProvider ?? "…"}</span>
+        <span className="rounded-full border border-sky-300 px-3 py-1 text-sm text-sky-700">messaging: {log?.provider ?? "…"} · email: {log?.emailProvider ?? "…"}</span>
         <div className="ml-auto flex gap-2">
           <Link href="/command" target="_blank" className="rounded-lg bg-sky-700 px-4 py-2 font-bold hover:bg-sky-600">
             Command map ↗
@@ -84,7 +84,7 @@ export default function DemoPanel() {
           <div className="text-sm text-slate-400">
             {d?.simTime ? (
               <>
-                Sim time <b className="text-purple-200">{new Date(d.simTime).toUTCString().slice(5, 22)}</b> {d.replayRunning ? "▶ running" : "⏸"}
+                Sim time <b className="text-purple-700">{new Date(d.simTime).toUTCString().slice(5, 22)}</b> {d.replayRunning ? "▶ running" : "⏸"}
               </>
             ) : (
               "Live (no replay)"
@@ -208,9 +208,9 @@ export default function DemoPanel() {
                       <td title={m.channel}>{m.channel === "voice" ? "📞" : m.channel === "email" ? "📧" : "✉"}</td>
                       <td className="whitespace-nowrap pr-2 font-mono text-xs">{m.to}</td>
                       <td className="text-xs uppercase">{m.language ?? ""}</td>
-                      <td className="pr-2 text-xs text-sky-300">{m.purpose}</td>
+                      <td className="pr-2 text-xs text-sky-700">{m.purpose}</td>
                       <td className="pr-2 text-xs text-slate-300">{m.subject ? <b className="block text-slate-100">{m.subject}</b> : null}{m.channel === "email" ? m.body.split("\n").slice(2, 4).join(" ") : m.body}</td>
-                      <td className={`text-xs ${m.status === "failed" ? "text-red-400" : m.status === "queued" ? "text-amber-300" : "text-green-400"}`} title={m.last_error ?? ""}>
+                      <td className={`text-xs ${m.status === "failed" ? "text-red-700" : m.status === "queued" ? "text-sky-700" : "text-green-700"}`} title={m.last_error ?? ""}>
                         {m.status}
                         {m.attempts > 1 ? ` (${m.attempts})` : ""}
                       </td>
@@ -253,7 +253,7 @@ function Btn({ name, onClick, busy, primary, danger, testid }: { name: string; o
       data-testid={testid}
       disabled={!!busy}
       onClick={onClick}
-      className={`rounded-lg px-4 py-2 font-bold disabled:opacity-50 ${danger ? "bg-red-700 hover:bg-red-600" : primary ? "bg-amber-500 text-slate-950 hover:bg-amber-400" : "bg-slate-700 hover:bg-slate-600"}`}
+      className={`rounded-lg px-4 py-2 font-bold disabled:opacity-50 ${danger ? "bg-red-700 hover:bg-red-600" : primary ? "bg-sky-600 text-[#08203f] hover:bg-sky-500" : "bg-slate-700 hover:bg-slate-600"}`}
     >
       {busy === name ? "…" : name}
     </button>

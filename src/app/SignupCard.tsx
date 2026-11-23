@@ -69,7 +69,7 @@ export default function SignupCard({ regionName }: { regionName: string }) {
 
   if (done)
     return (
-      <div className="rounded-3xl bg-[#e6f3ff] p-6 text-[#0a2452] shadow-2xl shadow-black/30 sm:p-8" data-testid="signup-done">
+      <div className="rounded-3xl border border-[#cfe4fb] bg-[#eaf4ff] p-6 text-[#0a2452] shadow-xl shadow-[#0b4ea2]/10 sm:p-8" data-testid="signup-done">
         <div className="grid h-12 w-12 place-items-center rounded-full bg-green-600 text-2xl text-white">✓</div>
         <div className="mt-3 text-2xl font-black">You&apos;re signed up</div>
         <p className="mt-2 text-[15px] leading-relaxed text-[#1e4f8d]">
@@ -105,7 +105,7 @@ export default function SignupCard({ regionName }: { regionName: string }) {
 
   return (
     <form
-      className="rounded-3xl bg-[#e6f3ff] p-6 text-[#0a2452] shadow-2xl shadow-black/30 sm:p-8"
+      className="rounded-3xl border border-[#cfe4fb] bg-[#eaf4ff] p-6 text-[#0a2452] shadow-xl shadow-[#0b4ea2]/10 sm:p-8"
       data-testid="signup"
       onSubmit={async (e) => {
         e.preventDefault();
