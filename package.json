@@ -1,0 +1,52 @@
+{
+  "name": "floodguard",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:e2e": "playwright test",
+    "db:migrate": "tsx scripts/migrate.ts",
+    "db:seed": "tsx scripts/seed.ts",
+    "db:reset": "tsx scripts/migrate.ts --fresh && tsx scripts/seed.ts",
+    "setup": "npm run db:migrate && npm run db:seed",
+    "data:synthetic": "tsx scripts/generate-synthetic-data.ts",
+    "vercel-build": "tsx scripts/vercel-build.ts"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.119.2",
+    "@turf/turf": "^7.4.0",
+    "bcryptjs": "^3.0.3",
+    "jose": "^6.2.18",
+    "lucide-react": "^0.460.0",
+    "maplibre-gl": "^5.24.1",
+    "next": "16.4.6",
+    "postgres": "^3.4.9",
+    "react": "19.3.0",
+    "react-dom": "19.3.0",
+    "zod": "^4.6.7"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.63.0",
+    "@tailwindcss/turbopack": "4.3.3",
+    "@types/geojson": "^7946.0.16",
+    "@types/node": "^22.20.5",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "dotenv": "^18.0.10",
+    "eslint": "^9",
+    "eslint-config-next": "16.4.6",
+    "tailwindcss": "4.3.3",
+    "tsx": "^4.23.15",
+    "typescript": "^5",
+    "vitest": "^5.1.1"
+  },
+  "description": "FloodGuard — from early warning to rescue for flood-prone Nigerian communities",
+  "engines": {
+    "node": ">=20"
+  }
+}

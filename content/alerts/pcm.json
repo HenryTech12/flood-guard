@@ -1,0 +1,101 @@
+{
+  "_meta": {
+    "lang": "pcm",
+    "status": "DRAFT",
+    "notes": "Nigerian Pidgin drafted by the dev team. Used live, but please have a native Pidgin speaker from the community review wording before real deployment."
+  },
+  "alert": {
+    "medium": "FloodGuard {zone}: Flood fit come. Rain dey fall well well. Carry your property go up, charge phone, know your shelter: {shelter}. Need help? SMS HELP to {shortcode} or dial {ussd}",
+    "high": "FloodGuard {zone}: FLOOD WARNING. Water fit enter house soon. Carry pikin, old people & sick people go high ground now now. Shelter: {shelter}. Water trap you? SMS HELP to {shortcode}",
+    "severe": "FloodGuard {zone}: BIG FLOOD DON COME. Comot from low area NOW. Go {shelter}. No waka or drive inside water wey dey run. E trap you? SMS HELP to {shortcode} or dial {ussd}"
+  },
+  "voice": {
+    "medium": "Na FloodGuard dey talk. Flood fit come for {zone}. Rain dey fall well well. Carry your property go high place, charge your phone, and know the road wey go {shelter}. If you need help, send HELP for SMS to {shortcode}.",
+    "high": "Na FloodGuard dey talk. Flood warning for {zone}. Water fit enter house soon. Carry pikin, old people and sick people go high ground now now. The shelter wey near you na {shelter}. If water trap you, send HELP for SMS to {shortcode}, or dial {ussd}.",
+    "severe": "Na FloodGuard dey talk. Big flood don come for {zone}. Comot from low area now now and go {shelter}. No waka or drive inside water wey dey run. If water trap you, send HELP for SMS to {shortcode}, or dial {ussd}. Tell us how many people dey with you."
+  },
+  "radio": {
+    "level_word": {
+      "medium": "FLOOD FIT COME",
+      "high": "FLOOD WARNING",
+      "severe": "BIG FLOOD EMERGENCY"
+    },
+    "level_body": {
+      "medium": "Heavy rain fit cause flood for low area. Abeg carry your property, papers and food go high place. Charge your phone. Agree with your family where una go meet.",
+      "high": "Water fit enter house for low area before many hours pass. Carry pikin, old people, woman wey get belle, disabled and sick people go high ground NOW. No wait until water reach your door.",
+      "severe": "Flood dey happen now. Comot from low area now now and go the shelter wey near you. No waka, swim or drive inside water wey dey run — even knee-level water fit carry person. Off light for main switch if e safe."
+    },
+    "script": "FLOODGUARD ANNOUNCEMENT FOR COMMUNITY\n{level_word} — {zone}\nTime: {time}\n\n{level_body}\n\nWhy we dey warn una: {reasons}.\n\nArea wey dey for danger pass: near {landmarks}.\n\nShelter wey get space: {shelters}.\n\nIf water trap you or you need rescue, send SMS HELP to {shortcode}, or dial {ussd} for any phone — e free. Talk how many people dey with you. If you dey safe, send SAFE make your family know.\n\nAbeg share this message with your neighbours, especially old people, disabled people and family wey get small pikin.\n\n[Read am slow, two times. Approved by: __________ ]"
+  },
+  "sms": {
+    "help_ack": "FloodGuard: We don receive your help request {ref} ({people} people). Stay for the highest safe place. Rescuers dey come. Reply anytime with more info.",
+    "help_ack_unlocated": "FloodGuard: We don receive help request {ref}. We no know where you dey: reply with your area and landmark wey near you (e.g. a market, school or bus stop).",
+    "help_merged": "FloodGuard: Request {ref} don update ({people} people). Rescuers don see am.",
+    "location_updated": "FloodGuard: Thank you. Location for {ref} na near {place}.",
+    "rescuer_assigned": "FloodGuard: Rescuer ({vtype}) don accept {ref} and e dey come. Stay where you dey if e safe.",
+    "rescued_resident": "FloodGuard: You don dey RESCUED ({ref}). Shelter wey near you get space: {shelter}.",
+    "family_safe_rescued": "FloodGuard: Dem don rescue {name}, e dey safe. Ref {ref}.",
+    "family_safe_checkin": "FloodGuard: {name} talk say e dey SAFE for {time}.",
+    "safe_ack": "FloodGuard: We don mark you SAFE. We don tell your family. If anything change, SMS HELP to {shortcode}.",
+    "safe_ack_closed": "FloodGuard: We don mark you SAFE and close request {ref}. If you still need help, SMS HELP.",
+    "report_ack": "FloodGuard: Thank you. We don get your report{place}. E dey help rescuers and the flood map.",
+    "shelter_info": "FloodGuard: Shelter wey near you: {name}, {distance} from you, space for {space}. Tel {phone}.",
+    "shelter_none": "FloodGuard: We no see shelter wey get space near you. If you dey for danger, SMS HELP to {shortcode}.",
+    "unknown": "FloodGuard: SMS HELP (e.g. HELP 3 people roof) if you need rescue, SAFE if you dey safe, WATER knee to report flood, SHELTER for shelter wey near.",
+    "stop_ack": "FloodGuard: Flood alert don stop. SMS START to join back. You fit still SMS HELP anytime.",
+    "start_ack": "FloodGuard: Flood alert don ON for your number.",
+    "lang_ack": "FloodGuard: Language na {language} now.",
+    "delete_ack": "FloodGuard: We don delete your registration and house info. You fit still SMS HELP anytime.",
+    "register_ack": "FloodGuard: {name} don register for {zone}. Alert go come for {language}. SMS STOP to stop am, DELETE to clear your data.",
+    "job_offer": "FloodGuard job {ref}: {people} people, {distance} away, urgency {urgency}. Open volunteer app to accept inside 2 min.",
+    "job_cancelled": "FloodGuard: Job {ref} don change hand or close. Thank you.",
+    "otp": "FloodGuard volunteer login code: {code}. E go work for 5 minutes. No give anybody."
+  },
+  "ussd": {
+    "main": "CON FloodGuard {region}\n1. I need help\n2. I dey safe\n3. Report flood\n4. Shelter wey near\n5. Register my house",
+    "ask_people": "CON How many people dey with you? Type number:",
+    "ask_vulnerable": "CON Old person, disabled, woman wey get belle, small pikin or sick person dey?\n1. Yes\n2. No",
+    "ask_vulnerable_type": "CON Who need extra care?\n1. Old person\n2. Disabled\n3. Woman wey get belle\n4. Pikin under 5\n5. Sick person",
+    "ask_where": "CON Where you dey now?\n1. For my house wey I register\n2. Choose landmark",
+    "ask_area": "CON Choose your area:\n{list}",
+    "ask_landmark": "CON Landmark wey near you:\n{list}\n0. I no sure",
+    "confirm_help": "CON Send help for {people} people near {place}?\n1. Confirm\n2. Cancel",
+    "help_done": "END We don receive help request {ref}. Stay for high place. Rescuers dey come. We go SMS you.",
+    "safe_done": "END Thank you. We don mark you SAFE. We go tell your family.",
+    "ask_report_type": "CON Wetin you see?\n1. Water for house/street\n2. Road don block\n3. Gutter don block",
+    "ask_depth": "CON How deep the water be?\n1. Ankle\n2. Knee\n3. Waist\n4. Chest or pass",
+    "report_done": "END Thank you. Your report dey help rescuers.",
+    "shelter": "END Shelter wey near: {name} ({distance}). Space for {space}. Tel {phone}",
+    "shelter_none": "END We no see shelter wey get space. If you dey for danger SMS HELP to {shortcode}.",
+    "reg_name": "CON Register your house.\nType your name:",
+    "reg_lang": "CON Which language you want?\n1. English\n2. Pidgin\n3. Hausa\n4. Yoruba\n5. Igbo",
+    "reg_vulnerable": "CON Anybody for house need extra care?\n1. Old person\n2. Disabled\n3. Woman wey get belle\n4. Pikin under 5\n5. Sick person\n0. Nobody",
+    "reg_family": "CON Family phone wey we go tell when you safe (0 to skip):",
+    "reg_consent": "CON FloodGuard go keep your phone, area & house needs ONLY to warn and rescue you. SMS DELETE anytime to clear am.\n1. I agree\n2. Cancel",
+    "reg_done": "END You don register. Flood alert go come for {zone}.",
+    "cancelled": "END E don cancel. Dial {ussd} anytime.",
+    "invalid": "END Wrong choice. Abeg dial {ussd} again."
+  },
+  "email": {
+    "alert_subject": {
+      "medium": "Flood fit come for {zone}",
+      "high": "FLOOD WARNING for {zone}",
+      "severe": "BIG FLOOD — comot from low area for {zone} now"
+    },
+    "alert_title": {
+      "medium": "Flood fit come: {zone}",
+      "high": "Flood warning: {zone}",
+      "severe": "Big flood emergency: {zone}"
+    },
+    "safe_subject": "{name} dey safe",
+    "safe_rescued": "FloodGuard volunteer don rescue {name}, e dey safe now (reference {ref}).",
+    "safe_checkin": "{name} talk say e dey SAFE for FloodGuard by {time}.",
+    "footer": "You dey get this message because you register with FloodGuard. SMS STOP to {shortcode} to stop alert, or DELETE to clear your data.",
+    "verify_subject": "Confirm your email for FloodGuard alert",
+    "verify_title": "Confirm your email",
+    "verify_body": "Hello {name}, you don register for FloodGuard flood alert for {zone}. Confirm this email make we fit send you warning for here plus SMS.",
+    "verify_cta": "Confirm my email",
+    "verify_ignore": "If no be you register, no worry — we no go send you anything.",
+    "unsubscribe": "Stop alert email"
+  }
+}

@@ -1,0 +1,55 @@
+{
+ "synthetic": true,
+ "source": "SYNTHETIC stand-in for geo/dem_risk.py (Copernicus GLO-30 DEM + 2022 flood overlap). Values are the hand-set config values.",
+ "method": "base = 0.4·(1 − elev_norm) + 0.2·flatness + 0.4·flood_overlap_2022",
+ "zones": {
+  "makoko": {
+   "base_risk_score": 0.82,
+   "mean_elevation_m": 61,
+   "mean_slope_deg": 1.8,
+   "historically_flooded": true
+  },
+  "lagos-island": {
+   "base_risk_score": 0.74,
+   "mean_elevation_m": 68,
+   "mean_slope_deg": 2.3,
+   "historically_flooded": true
+  },
+  "ikoyi": {
+   "base_risk_score": 0.45,
+   "mean_elevation_m": 95,
+   "mean_slope_deg": 4.4,
+   "historically_flooded": false
+  },
+  "victoria-island": {
+   "base_risk_score": 0.8,
+   "mean_elevation_m": 63,
+   "mean_slope_deg": 1.9,
+   "historically_flooded": true
+  },
+  "lekki": {
+   "base_risk_score": 0.86,
+   "mean_elevation_m": 58,
+   "mean_slope_deg": 1.5,
+   "historically_flooded": true
+  },
+  "ajah": {
+   "base_risk_score": 0.84,
+   "mean_elevation_m": 59,
+   "mean_slope_deg": 1.6,
+   "historically_flooded": true
+  },
+  "surulere": {
+   "base_risk_score": 0.48,
+   "mean_elevation_m": 92,
+   "mean_slope_deg": 4.1,
+   "historically_flooded": false
+  },
+  "festac": {
+   "base_risk_score": 0.62,
+   "mean_elevation_m": 79,
+   "mean_slope_deg": 3.2,
+   "historically_flooded": true
+  }
+ }
+}

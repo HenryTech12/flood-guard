@@ -1,0 +1,41 @@
+# Local stack: PostGIS + the FloodGuard app.
+#
+#   docker compose up -d db                 # just the database (then `npm run dev`)
+#   docker compose up --build               # database + production build of the app on :3000
+#
+services:
+  db:
+    image: postgis/postgis:16-3.4-alpine
+    environment:
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: floodguard
+    ports:
+      - "54329:5432"
+    volumes:
+      - floodguard-db:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d floodguard"]
+      interval: 3s
+      timeout: 3s
+      retries: 20
+
+  app:
+    build: .
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: postgres://postgres:postgres@db:5432/floodguard
+      DEMO_MODE: "true"
+      DEMO_KEY: floodguard-demo
+      AUTH_SECRET: docker-local-secret-change-me-0123456789
+      MESSAGING_PROVIDER: mock
+      EMAIL_PROVIDER: mock
+      OPS_NOTIFY_EMAILS: sema-ops@example.com
+      PUBLIC_BASE_URL: http://localhost:3000
+      RUN_SETUP: "true"
+    ports:
+      - "3000:3000"
+
+volumes:
+  floodguard-db:

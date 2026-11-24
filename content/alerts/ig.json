@@ -1,0 +1,102 @@
+{
+  "_meta": {
+    "lang": "ig",
+    "status": "NEEDS_NATIVE_REVIEW",
+    "notes": "PLACEHOLDER — Igbo translations must be written and reviewed by a native Igbo speaker. Do NOT machine-translate. Until a key has text here AND _meta.status is changed to FINAL, FloodGuard sends the English text to Igbo speakers and flags this on the dashboard.",
+    "reference_en": "See content/alerts/en.json for the source text of every key."
+  },
+  "alert": {
+    "medium": "",
+    "high": "",
+    "severe": ""
+  },
+  "voice": {
+    "medium": "",
+    "high": "",
+    "severe": ""
+  },
+  "radio": {
+    "level_word": {
+      "medium": "",
+      "high": "",
+      "severe": ""
+    },
+    "level_body": {
+      "medium": "",
+      "high": "",
+      "severe": ""
+    },
+    "script": ""
+  },
+  "sms": {
+    "help_ack": "",
+    "help_ack_unlocated": "",
+    "help_merged": "",
+    "location_updated": "",
+    "rescuer_assigned": "",
+    "rescued_resident": "",
+    "family_safe_rescued": "",
+    "family_safe_checkin": "",
+    "safe_ack": "",
+    "safe_ack_closed": "",
+    "report_ack": "",
+    "shelter_info": "",
+    "shelter_none": "",
+    "unknown": "",
+    "stop_ack": "",
+    "start_ack": "",
+    "lang_ack": "",
+    "delete_ack": "",
+    "register_ack": "",
+    "job_offer": "",
+    "job_cancelled": "",
+    "otp": ""
+  },
+  "ussd": {
+    "main": "",
+    "ask_people": "",
+    "ask_vulnerable": "",
+    "ask_vulnerable_type": "",
+    "ask_where": "",
+    "ask_area": "",
+    "ask_landmark": "",
+    "confirm_help": "",
+    "help_done": "",
+    "safe_done": "",
+    "ask_report_type": "",
+    "ask_depth": "",
+    "report_done": "",
+    "shelter": "",
+    "shelter_none": "",
+    "reg_name": "",
+    "reg_lang": "",
+    "reg_vulnerable": "",
+    "reg_family": "",
+    "reg_consent": "",
+    "reg_done": "",
+    "cancelled": "",
+    "invalid": ""
+  },
+  "email": {
+    "alert_subject": {
+      "medium": "",
+      "high": "",
+      "severe": ""
+    },
+    "alert_title": {
+      "medium": "",
+      "high": "",
+      "severe": ""
+    },
+    "safe_subject": "",
+    "safe_rescued": "",
+    "safe_checkin": "",
+    "footer": "",
+    "verify_subject": "",
+    "verify_title": "",
+    "verify_body": "",
+    "verify_cta": "",
+    "verify_ignore": "",
+    "unsubscribe": ""
+  }
+}
