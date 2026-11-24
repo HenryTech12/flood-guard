@@ -265,7 +265,7 @@ CI (`.github/workflows/ci.yml`) runs typecheck, lint, unit tests and e2e against
 | Terrain | Copernicus DEM GLO-30 | Copernicus DEM licence (free, attribution) | used by `geo/dem_risk.py` |
 | Permanent water | JRC Global Surface Water | CC BY 4.0 (Pekel et al. 2016) | used by the flood script |
 | Processing | Google Earth Engine | Noncommercial terms; commercial use needs a licence | — |
-| Basemap tiles | © OpenStreetMap contributors, © CARTO | ODbL (data); CARTO basemaps free for limited/non-commercial use | online |
+| Basemap tiles | © OpenStreetMap contributors (tile.openstreetmap.org) | ODbL (data); OSM tile usage policy — fine for demos and light use, use a hosted tile provider for production | online |
 | Offline basemap | hand-drawn approximation of the rivers and main roads | this project | `public/data/basemap_lokoja.geojson` |
 | Zones, landmarks, shelters | hand-drawn approximations | this project (illustrative, not surveyed) | `config/regions/lokoja.ts` |
 | Map library | MapLibre GL JS | BSD-3-Clause | — |

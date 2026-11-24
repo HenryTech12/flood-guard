@@ -39,9 +39,10 @@ export default function CitizenMap({ events, centres, me }: { events: FloodEvent
         sources: {
           osm: {
             type: "raster",
-            tiles: ["a", "b", "c", "d"].map((s) => `https://${s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}@2x.png`),
+            tiles: ["https://tile.openstreetmap.org/{z}/{x}/{y}.png"],
             tileSize: 256,
-            attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> © CARTO',
+            maxzoom: 19,
+            attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
           },
           offline: { type: "geojson", data: `/data/${region.data.basemap}` },
         },
